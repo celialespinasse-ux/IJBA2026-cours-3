@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map { height: 100vh; width: 100%; }
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { margin: 0; padding: 0; font-family: sans-serif; }
         .legend {
             position: absolute;
             bottom: 30px;
@@ -44,54 +44,56 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        // Initialisation de la carte
+        console.log("Initialisation de la carte...");
         const map = L.map('map').setView([44.837789, -0.57918], 12);
 
-        // Remplacement d'OpenStreetMap par Esri World Imagery (Satellite)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
+            attribution: 'Tiles &copy; Esri'
         }).addTo(map);
 
-        // Ajout des noms de rues par-dessus le satellite pour mieux se repérer
         L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.png', {
-            attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>',
+            attribution: 'Stamen',
             subdomains: 'abcd',
             opacity: 0.7
         }).addTo(map);
 
-        // Lecture du CSV
-        const csvFile = "RAW_met_lieux_inclusion_numerique - RAW_met_lieux_inclusion_numerique (3).csv";
+        const csvFile = "lieux.csv";
+        console.log("Tentative de chargement du fichier :", csvFile);
 
         Papa.parse(csvFile, {
             download: true,
             header: true,
             delimiter: ";",
             complete: function(results) {
-                results.data.forEach(row => {
+                console.log("Fichier CSV chargé avec succès ! Nombre de lignes :", results.data.length);
+                let pointsAjoutes = 0;
+
+                results.data.forEach((row, index) => {
                     const lat = parseFloat(row.latitude);
                     const lng = parseFloat(row.longitude);
 
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        const marker = L.circleMarker([lat, lng], {
+                        L.circleMarker([lat, lng], {
                             radius: 6,
-                            fillColor: "#00ff00", // Vert fluo pour bien voir sur le satellite
+                            fillColor: "#00ff00",
                             color: "#ffffff",
                             weight: 2,
                             opacity: 1,
                             fillOpacity: 0.9
-                        }).addTo(map);
-
-                        marker.bindPopup(`
-                            <div style="min-width: 200px">
-                                <h3 style="margin:0 0 5px 0; color:#2c3e50;">${row.nom}</h3>
-                                <strong>Coords :</strong> ${lat.toFixed(6)}, ${lng.toFixed(6)}<br>
-                                <strong>Adresse :</strong> ${row.adresse_brut || row.adresse_commune}<br>
-                                <hr>
-                                <a href="https://www.google.com/maps/search/?api=1&query=${lat},${lng}" target="_blank" style="color:#3498db;">Vérifier sur Google Maps</a>
-                            </div>
-                        `);
+                        }).addTo(map)
+                        .bindPopup(`<strong>${row.nom}</strong><br>Coords: ${lat}, ${lng}`);
+                        pointsAjoutes++;
                     }
                 });
+                console.log("Nombre de points ajoutés à la carte :", pointsAjoutes);
+                
+                if (pointsAjoutes === 0) {
+                    console.error("Aucun point n'a pu être ajouté. Vérifiez les noms des colonnes 'latitude' et 'longitude' dans le CSV.");
+                    console.log("Première ligne du CSV pour vérification :", results.data[0]);
+                }
+            },
+            error: function(err) {
+                console.error("Erreur lors du chargement du CSV :", err);
             }
         });
     </script>
