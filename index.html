@@ -3,97 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vérification GPS - Inclusion Numérique</title>
+    <title>Carte Inclusion Numérique - Bordeaux Métropole</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 100vh; width: 100%; }
+        #map { height: 100vh; width: 100%; background: #001529; }
         body { margin: 0; padding: 0; font-family: sans-serif; }
-        .legend {
+        .info-box {
             position: absolute;
-            bottom: 30px;
-            left: 10px;
+            top: 20px;
+            right: 20px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px;
+            background: white;
+            padding: 15px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            font-size: 12px;
-        }
-        .header-title {
-            position: absolute;
-            top: 10px;
-            left: 50px;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
-            pointer-events: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            max-width: 250px;
         }
     </style>
 </head>
 <body>
-    <div class="header-title">Vérification des coordonnées GPS (Vue Satellite Esri)</div>
-    <div id="map"></div>
-    <div class="legend">
-        <strong>Légende</strong><br>
-        ● Lieu d'inclusion numérique<br>
-        <small>Données : Bordeaux Métropole</small>
+    <div class="info-box">
+        <h2 style="margin:0 0 10px 0; font-size: 16px;">Inclusion Numérique</h2>
+        <p style="margin:0; font-size: 13px; color: #666;">
+            Visualisation des lieux et limites de Bordeaux Métropole.
+        </p>
     </div>
+    <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        console.log("Initialisation de la carte...");
-        const map = L.map('map').setView([44.837789, -0.57918], 12);
+        const map = L.map('map').setView([44.837789, -0.57918], 11);
 
+        // Fond Satellite Esri
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri'
         }).addTo(map);
 
-        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-labels/{z}/{x}/{y}{r}.png', {
-            attribution: 'Stamen',
-            subdomains: 'abcd',
-            opacity: 0.7
-        }).addTo(map);
+        // 1. Ajout des délimitations de Bordeaux Métropole
+        fetch('https://opendata.bordeaux-metropole.fr/api/explore/v2.1/catalog/datasets/bm_limite_p/exports/geojson')
+            .then(res => res.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    style: {
+                        color: "#00d2ff",
+                        weight: 3,
+                        opacity: 1,
+                        fillOpacity: 0.1,
+                        dashArray: "5, 10"
+                    }
+                }).addTo(map);
+                console.log("Limites métropole chargées.");
+            })
+            .catch(err => console.error("Erreur GeoJSON limites:", err));
 
-        const csvFile = "lieux.csv";
-        console.log("Tentative de chargement du fichier :", csvFile);
-
-        Papa.parse(csvFile, {
+        // 2. Chargement des points depuis le CSV
+        Papa.parse("lieux.csv", {
             download: true,
             header: true,
             delimiter: ";",
+            skipEmptyLines: true,
             complete: function(results) {
-                console.log("Fichier CSV chargé avec succès ! Nombre de lignes :", results.data.length);
-                let pointsAjoutes = 0;
-
-                results.data.forEach((row, index) => {
-                    const lat = parseFloat(row.latitude);
-                    const lng = parseFloat(row.longitude);
+                console.log("CSV chargé, lignes trouvées :", results.data.length);
+                
+                results.data.forEach(row => {
+                    // Nettoyage des coordonnées (remplacement virgule par point si nécessaire)
+                    let lat = parseFloat(String(row.latitude).replace(',', '.'));
+                    let lng = parseFloat(String(row.longitude).replace(',', '.'));
 
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        L.circleMarker([lat, lng], {
-                            radius: 6,
-                            fillColor: "#00ff00",
-                            color: "#ffffff",
+                        const marker = L.circleMarker([lat, lng], {
+                            radius: 7,
+                            fillColor: "#ff0000", // Rouge vif pour bien voir sur le satellite
+                            color: "#fff",
                             weight: 2,
                             opacity: 1,
                             fillOpacity: 0.9
-                        }).addTo(map)
-                        .bindPopup(`<strong>${row.nom}</strong><br>Coords: ${lat}, ${lng}`);
-                        pointsAjoutes++;
+                        }).addTo(map);
+
+                        marker.bindPopup(`
+                            <strong>${row.nom}</strong><br>
+                            ${row.adresse_commune}<br>
+                            <small>GPS: ${lat.toFixed(5)}, ${lng.toFixed(5)}</small>
+                        `);
                     }
                 });
-                console.log("Nombre de points ajoutés à la carte :", pointsAjoutes);
-                
-                if (pointsAjoutes === 0) {
-                    console.error("Aucun point n'a pu être ajouté. Vérifiez les noms des colonnes 'latitude' et 'longitude' dans le CSV.");
-                    console.log("Première ligne du CSV pour vérification :", results.data[0]);
-                }
-            },
-            error: function(err) {
-                console.error("Erreur lors du chargement du CSV :", err);
             }
         });
     </script>
