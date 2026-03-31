@@ -7,24 +7,52 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
         #map { height: 100vh; width: 100%; }
-        body { margin: 0; padding: 0; }
+        body { margin: 0; padding: 0; font-family: sans-serif; }
+        .info-panel {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
+    <div class="info-panel">
+        <strong>Inclusion Numérique</strong><br>
+        Bordeaux Métropole
+    </div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        // Initialisation de la carte centrée sur Bordeaux
-        const map = L.map('map').setView([44.837789, -0.57918], 12);
+        const map = L.map('map').setView([44.837789, -0.57918], 11);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '© OpenStreetMap contributors © CARTO'
         }).addTo(map);
 
-        // Chargement et traitement du CSV
-        // Note : On utilise le nom exact du fichier présent dans le dossier
+        // 1. Ajout des contours de Bordeaux Métropole (GeoJSON)
+        fetch('https://opendata.bordeaux-metropole.fr/api/explore/v2.1/catalog/datasets/ec_com_art/exports/geojson')
+            .then(response => response.json())
+            .then(data => {
+                L.geoJSON(data, {
+                    style: {
+                        color: "#2c3e50",
+                        weight: 2,
+                        opacity: 0.6,
+                        fillOpacity: 0.05,
+                        dashArray: '5, 5'
+                    },
+                    interactive: false
+                }).addTo(map);
+            });
+
+        // 2. Chargement des points depuis le CSV
         const csvFile = "RAW_met_lieux_inclusion_numerique - RAW_met_lieux_inclusion_numerique (3).csv";
 
         Papa.parse(csvFile, {
@@ -37,18 +65,37 @@
                     const lng = parseFloat(row.longitude);
 
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        const marker = L.marker([lat, lng]).addTo(map);
+                        // Utilisation de CircleMarker pour des points plus nets
+                        const marker = L.circleMarker([lat, lng], {
+                            radius: 8,
+                            fillColor: "#e67e22",
+                            color: "#fff",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8
+                        }).addTo(map);
+
                         marker.bindPopup(`
-                            <strong>${row.nom}</strong><br>
-                            ${row.type_lieu}<br>
-                            <em>${row.adresse_commune}</em><br>
-                            <small>${row.contact_telephone || ''}</small>
+                            <div style="font-size: 14px;">
+                                <strong>${row.nom}</strong><br>
+                                <span style="color: #7f8c8d;">${row.type_lieu}</span><br>
+                                <hr style="margin: 5px 0;">
+                                📍 ${row.adresse_commune}<br>
+                                📞 ${row.contact_telephone || 'Non renseigné'}
+                            </div>
                         `);
+
+                        // Effet au survol
+                        marker.on('mouseover', function (e) {
+                            this.setRadius(12);
+                            this.setStyle({ fillColor: "#d35400" });
+                        });
+                        marker.on('mouseout', function (e) {
+                            this.setRadius(8);
+                            this.setStyle({ fillColor: "#e67e22" });
+                        });
                     }
                 });
-            },
-            error: function(err) {
-                console.error("Erreur lors du chargement du CSV:", err);
             }
         });
     </script>
