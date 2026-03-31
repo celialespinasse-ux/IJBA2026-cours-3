@@ -6,102 +6,95 @@
     <title>Carte Inclusion Numérique - Bordeaux Métropole</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        #map { height: 100vh; width: 100%; background: #001529; }
-        body { margin: 0; padding: 0; font-family: sans-serif; }
-        #debug-panel {
+        #map { height: 100vh; width: 100%; background: #000; }
+        body { margin: 0; padding: 0; }
+        .info {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 2000;
+            top: 10px;
+            left: 50px;
+            z-index: 1000;
             background: rgba(0,0,0,0.8);
-            color: #00ff00;
+            color: white;
             padding: 10px;
-            font-family: monospace;
-            font-size: 10px;
-            max-width: 300px;
-            max-height: 200px;
-            overflow-y: auto;
             border-radius: 5px;
-            pointer-events: none;
+            font-family: sans-serif;
+            border: 1px solid #444;
         }
     </style>
 </head>
 <body>
-    <div id="debug-panel">Chargement des données...</div>
+    <div class="info">
+        <b>Inclusion Numérique</b><br>
+        Bordeaux Métropole
+    </div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script>
-        const debug = (msg) => {
-            const panel = document.getElementById('debug-panel');
-            panel.innerHTML += "<br>> " + msg;
-            console.log(msg);
-        };
+        // Initialisation centrée sur Bordeaux
+        const map = L.map('map').setView([44.84, -0.58], 11);
 
-        const map = L.map('map').setView([44.837789, -0.57918], 11);
-
-        // Fond Satellite Esri
+        // Couche Satellite (Esri)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri'
         }).addTo(map);
 
-        // 1. Délimitations de Bordeaux Métropole (Source alternative)
-        debug("Chargement des limites...");
+        // 1. AFFICHAGE DES LIMITES DE LA METROPOLE
+        // Source : GeoJSON des communes de France
         fetch('https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements/33-gironde/communes-33-gironde.geojson')
-            .then(res => res.json())
+            .then(response => response.json())
             .then(data => {
-                // On ne garde que les communes de la métropole (liste simplifiée pour test)
-                const bordeauxMetropole = ["Bordeaux", "Mérignac", "Pessac", "Talence", "Villenave-d'Ornon", "Saint-Médard-en-Jalles", "Bègles", "Cenon", "Gradignan", "Le Bouscat", "Lormont", "Eysines", "Floirac", "Blanquefort", "Bruges", "Ambarès-et-Lagrave", "Parempuyre", "Artigues-près-Bordeaux", "Saint-Loubès", "Le Haillan", "Le Taillan-Médoc", "Martignas-sur-Jalle", "Saint-Aubin-de-Médoc", "Carbon-Blanc"];
-                
+                const codesInseeMetropole = [
+                    "33003", "33004", "33013", "33032", "33039", "33056", "33063", "33069", "33075", "33096", 
+                    "33119", "33162", "33167", "33192", "33200", "33249", "33273", "33281", "33312", "33318", 
+                    "33433", "33449", "33519", "33522", "33533", "33540", "33550", "33563"
+                ];
+
                 L.geoJSON(data, {
                     filter: function(feature) {
-                        return bordeauxMetropole.includes(feature.properties.nom);
+                        return codesInseeMetropole.includes(feature.properties.code);
                     },
                     style: {
-                        color: "#00d2ff",
+                        color: "#ffffff",
                         weight: 2,
-                        opacity: 0.8,
-                        fillOpacity: 0.05
+                        fillOpacity: 0.1,
+                        dashArray: "5, 5"
                     }
                 }).addTo(map);
-                debug("Limites affichées.");
-            })
-            .catch(err => debug("Erreur limites: " + err.message));
+            });
 
-        // 2. Chargement des points (Ajout d'un cache-breaker pour GitHub Pages)
-        debug("Chargement du CSV...");
-        Papa.parse("lieux.csv?v=" + Math.random(), {
+        // 2. AFFICHAGE DES POINTS DEPUIS LE CSV
+        Papa.parse("lieux.csv", {
             download: true,
             header: true,
-            delimiter: ";",
             skipEmptyLines: true,
             complete: function(results) {
-                debug("CSV chargé: " + results.data.length + " lignes.");
-                let count = 0;
+                console.log("Données chargées :", results.data);
                 
                 results.data.forEach(row => {
-                    let lat = parseFloat(String(row.latitude).replace(',', '.'));
-                    let lng = parseFloat(String(row.longitude).replace(',', '.'));
+                    // Nettoyage des noms de colonnes et des valeurs
+                    const latAttr = row.latitude || row.Latitude || row["latitude"];
+                    const lngAttr = row.longitude || row.Longitude || row["longitude"];
+                    
+                    if (latAttr && lngAttr) {
+                        const lat = parseFloat(String(latAttr).replace(',', '.'));
+                        const lng = parseFloat(String(lngAttr).replace(',', '.'));
 
-                    if (!isNaN(lat) && !isNaN(lng)) {
-                        L.circleMarker([lat, lng], {
-                            radius: 6,
-                            fillColor: "#ff3333",
-                            color: "#ffffff",
-                            weight: 1.5,
-                            opacity: 1,
-                            fillOpacity: 0.9
-                        }).addTo(map)
-                        .bindPopup(`<strong>${row.nom}</strong><br>${row.adresse_commune}`);
-                        count++;
+                        if (!isNaN(lat) && !isNaN(lng)) {
+                            L.circleMarker([lat, lng], {
+                                radius: 6,
+                                fillColor: "#ffff00", // JAUNE pour contraste maximal sur satellite
+                                color: "#000",
+                                weight: 1,
+                                opacity: 1,
+                                fillOpacity: 0.9
+                            })
+                            .addTo(map)
+                            .bindPopup(`<b>${row.nom}</b><br>${row.adresse_commune}`);
+                        }
                     }
                 });
-                debug(count + " points ajoutés à la carte.");
-                if(count === 0) debug("ERREUR: Aucun point GPS valide trouvé.");
-            },
-            error: function(err) {
-                debug("Erreur CSV: " + err);
             }
         });
     </script>
