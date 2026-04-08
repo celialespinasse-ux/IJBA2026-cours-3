@@ -3,137 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Évolution Police - Bordeaux Métropole</title>
+    <title>Police Municipale - Bordeaux Métropole</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; background: #000; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; background: #1a1a1a; }
         #map { height: 100vh; width: 100%; }
         .legend {
-            background: rgba(0, 0, 0, 0.85);
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,255,255,0.3);
-            line-height: 1.6;
-            font-size: 13px;
-            color: #fff;
-            border: 1px solid #00ffff;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 4px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+            line-height: 1.5;
+            font-size: 12px;
+            color: #333;
         }
-        .legend i { width: 15px; height: 15px; float: left; margin-right: 10px; border-radius: 50%; border: 1px solid #fff; }
+        .legend i { width: 12px; height: 12px; float: left; margin-right: 8px; border-radius: 50%; margin-top: 3px; }
         .info-panel {
             position: absolute;
             top: 20px;
-            left: 20px;
+            left: 50px;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.9);
-            color: #00ffff;
-            padding: 15px 25px;
-            border-radius: 8px;
-            border-left: 6px solid #00ffff;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border-left: 5px solid #2c3e50;
         }
-        .info-panel h1 { margin: 0; font-size: 20px; text-transform: uppercase; letter-spacing: 1px; }
-        .popup-table { width: 100%; border-collapse: collapse; margin-top: 10px; color: #333; }
-        .popup-table th, .popup-table td { border: 1px solid #ccc; padding: 6px; text-align: center; }
-        .popup-table th { background-color: #f0f0f0; }
-        .popup-title { margin: 0; font-size: 16px; color: #2c3e50; border-bottom: 2px solid #00ffff; padding-bottom: 5px; }
+        .info-panel h1 { margin: 0; font-size: 18px; color: #2c3e50; }
+        .popup-card { min-width: 220px; }
+        .popup-card h3 { margin: 0 0 10px 0; font-size: 16px; border-bottom: 1px solid #ccc; padding-bottom: 5px; color: #2c3e50; }
+        .popup-table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+        .popup-table th, .popup-table td { padding: 4px; border: 1px solid #eee; text-align: center; font-size: 11px; }
+        .popup-table th { background: #f8f9fa; }
+        .ratio-box { background: #f1f2f6; padding: 8px; border-radius: 4px; font-size: 12px; margin-top: 5px; }
     </style>
 </head>
 <body>
     <div class="info-panel">
-        <h1>Bordeaux Métropole</h1>
-        <div style="color: #fff; font-size: 13px;">Évolution Police Municipale (2020 - 2024)</div>
+        <h1>Effectifs de Police Municipale</h1>
+        <div style="font-size: 12px; color: #7f8c8d;">Bordeaux Métropole • Évolution et Ratios (2020-2024)</div>
     </div>
     <div id="map"></div>
 
     <script>
-        const map = L.map('map', {
-            center: [44.85, -0.58],
-            zoom: 11,
-            maxZoom: 19
-        });
+        const map = L.map('map').setView([44.86, -0.58], 11);
 
-        // Fond Satellite robuste
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '&copy; Esri World Imagery'
         }).addTo(map);
 
-        // DONNÉES INTÉGRÉES (Pas de chargement CSV externe pour éviter les erreurs)
-        const data = [
-            {"commune":"Ambares Et Lagrave","lat":44.9244,"lng":-0.4851,"2020":3,"2021":3,"2022":3,"2023":3,"2024":5},
-            {"commune":"Ambes","lat":45.0131,"lng":-0.5314,"2020":0,"2021":0,"2022":0,"2023":0,"2024":0},
-            {"commune":"Artigues Pres Bordeaux","lat":44.8598,"lng":-0.4951,"2020":3,"2021":3,"2022":3,"2023":3,"2024":3},
-            {"commune":"Bassens","lat":44.9039,"lng":-0.5172,"2020":4,"2021":5,"2022":6,"2023":6,"2024":6},
-            {"commune":"Begles","lat":44.8078,"lng":-0.5494,"2020":4,"2021":4,"2022":4,"2023":5,"2024":5},
-            {"commune":"Blanquefort","lat":44.9111,"lng":-0.6381,"2020":4,"2021":4,"2022":3,"2023":4,"2024":4},
-            {"commune":"Bordeaux","lat":44.8378,"lng":-0.5792,"2020":135,"2021":164,"2022":163,"2023":170,"2024":177},
-            {"commune":"Bouliac","lat":44.8133,"lng":-0.5011,"2020":1,"2021":1,"2022":1,"2023":1,"2024":1},
-            {"commune":"Bruges","lat":44.8825,"lng":-0.6122,"2020":7,"2021":7,"2022":5,"2023":9,"2024":9},
-            {"commune":"Carbon Blanc","lat":44.8953,"lng":-0.5064,"2020":2,"2021":2,"2022":2,"2023":2,"2024":2},
-            {"commune":"Cenon","lat":44.8572,"lng":-0.5322,"2020":10,"2021":11,"2022":14,"2023":14,"2024":14},
-            {"commune":"Eysines","lat":44.8844,"lng":-0.6503,"2020":3,"2021":3,"2022":4,"2023":4,"2024":5},
-            {"commune":"Floirac","lat":44.8372,"lng":-0.5244,"2020":12,"2021":8,"2022":10,"2023":9,"2024":8},
-            {"commune":"Gradignan","lat":44.7722,"lng":-0.6172,"2020":6,"2021":8,"2022":8,"2023":9,"2024":9},
-            {"commune":"Le Bouscat","lat":44.8653,"lng":-0.5994,"2020":6,"2021":6,"2022":8,"2023":6,"2024":8},
-            {"commune":"Le Haillan","lat":44.8722,"lng":-0.6781,"2020":3,"2021":3,"2022":4,"2023":4,"2024":4},
-            {"commune":"Le Taillan Medoc","lat":44.9053,"lng":-0.6694,"2020":4,"2021":4,"2022":4,"2023":4,"2024":4},
-            {"commune":"Lormont","lat":44.8789,"lng":-0.5222,"2020":9,"2021":11,"2022":8,"2023":12,"2024":12},
-            {"commune":"Martignas Sur Jalle","lat":44.8411,"lng":-0.7761,"2020":3,"2021":3,"2022":4,"2023":3,"2024":3},
-            {"commune":"Merignac","lat":44.8386,"lng":-0.6472,"2020":24,"2021":23,"2022":25,"2023":29,"2024":28},
-            {"commune":"Parempuyre","lat":44.9494,"lng":-0.6053,"2020":3,"2021":3,"2022":3,"2023":2,"2024":2},
-            {"commune":"Pessac","lat":44.8061,"lng":-0.6311,"2020":19,"2021":28,"2022":28,"2023":28,"2024":28},
-            {"commune":"Saint Aubin De Medoc","lat":44.9122,"lng":-0.7231,"2020":3,"2021":4,"2022":4,"2023":4,"2024":4},
-            {"commune":"Saint Louis De Montferrand","lat":44.9522,"lng":-0.5411,"2020":1,"2021":1,"2022":1,"2023":1,"2024":1},
-            {"commune":"Saint Medard En Jalles","lat":44.8961,"lng":-0.7181,"2020":6,"2021":8,"2022":9,"2023":11,"2024":12},
-            {"commune":"Saint Vincent De Paul","lat":44.9544,"0.4694":3,"2020":0,"2021":0,"2022":0,"2023":0,"2024":0},
-            {"commune":"Talence","lat":44.8011,"lng":-0.5903,"2020":12,"2021":12,"2022":14,"2023":16,"2024":16},
-            {"commune":"Villenave D Ornon","lat":44.7733,"lng":-0.5672,"2020":12,"2021":11,"2022":10,"2023":11,"2024":17}
+        // Délimitation de la Métropole
+        fetch('https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements/33-gironde/communes-33-gironde.geojson')
+            .then(res => res.json())
+            .then(data => {
+                const codesMetropole = ["33003", "33004", "33013", "33032", "33039", "33056", "33063", "33069", "33075", "33096", "33119", "33162", "33167", "33192", "33200", "33249", "33273", "33281", "33312", "33318", "33433", "33449", "33519", "33522", "33533", "33540", "33550", "33563"];
+                L.geoJSON(data, {
+                    filter: f => codesMetropole.includes(f.properties.code),
+                    style: { color: "#ffffff", weight: 1.5, fillOpacity: 0.1, fillColor: "#ffffff", dashArray: '5, 5' }
+                }).addTo(map);
+            });
+
+        // Données intégrées avec Population 2024
+        const policeData = [
+            {"commune":"Ambarès-et-Lagrave","lat":44.9244,"lng":-0.4851,"pop":17500,"2020":3,"2021":3,"2022":3,"2023":3,"2024":5},
+            {"commune":"Ambès","lat":45.0131,"lng":-0.5314,"pop":3291,"2020":0,"2021":0,"2022":0,"2023":0,"2024":0},
+            {"commune":"Artigues-près-Bordeaux","lat":44.8598,"lng":-0.4951,"pop":9500,"2020":3,"2021":3,"2022":3,"2023":3,"2024":3},
+            {"commune":"Bassens","lat":44.9039,"lng":-0.5172,"pop":8200,"2020":4,"2021":5,"2022":6,"2023":6,"2024":6},
+            {"commune":"Bègles","lat":44.8078,"lng":-0.5494,"pop":30642,"2020":4,"2021":4,"2022":4,"2023":5,"2024":5},
+            {"commune":"Blanquefort","lat":44.9111,"lng":-0.6381,"pop":17419,"2020":4,"2021":4,"2022":3,"2023":4,"2024":4},
+            {"commune":"Bordeaux","lat":44.8378,"lng":-0.5792,"pop":266887,"2020":135,"2021":164,"2022":163,"2023":170,"2024":177},
+            {"commune":"Bouliac","lat":44.8133,"lng":-0.5011,"pop":4800,"2020":1,"2021":1,"2022":1,"2023":1,"2024":1},
+            {"commune":"Bruges","lat":44.8825,"lng":-0.6122,"pop":21000,"2020":7,"2021":7,"2022":5,"2023":9,"2024":9},
+            {"commune":"Carbon-Blanc","lat":44.8953,"lng":-0.5064,"pop":8500,"2020":2,"2021":2,"2022":2,"2023":2,"2024":2},
+            {"commune":"Cenon","lat":44.8572,"lng":-0.5322,"pop":26600,"2020":10,"2021":11,"2022":14,"2023":14,"2024":14},
+            {"commune":"Eysines","lat":44.8844,"lng":-0.6503,"pop":24436,"2020":3,"2021":3,"2022":4,"2023":4,"2024":5},
+            {"commune":"Floirac","lat":44.8372,"lng":-0.5244,"pop":19000,"2020":12,"2021":8,"2022":10,"2023":9,"2024":8},
+            {"commune":"Gradignan","lat":44.7722,"lng":-0.6172,"pop":26000,"2020":6,"2021":8,"2022":8,"2023":9,"2024":9},
+            {"commune":"Le Bouscat","lat":44.8653,"lng":-0.5994,"pop":24339,"2020":6,"2021":6,"2022":8,"2023":6,"2024":8},
+            {"commune":"Le Haillan","lat":44.8722,"lng":-0.6781,"pop":12507,"2020":3,"2021":3,"2022":4,"2023":4,"2024":4},
+            {"commune":"Le Taillan-Médoc","lat":44.9053,"lng":-0.6694,"pop":10500,"2020":4,"2021":4,"2022":4,"2023":4,"2024":4},
+            {"commune":"Lormont","lat":44.8789,"lng":-0.5222,"pop":24000,"2020":9,"2021":11,"2022":8,"2023":12,"2024":12},
+            {"commune":"Martignas-sur-Jalle","lat":44.8411,"lng":-0.7761,"pop":8500,"2020":3,"2021":3,"2022":4,"2023":3,"2024":3},
+            {"commune":"Mérignac","lat":44.8386,"lng":-0.6472,"pop":76000,"2020":24,"2021":23,"2022":25,"2023":29,"2024":28},
+            {"commune":"Parempuyre","lat":44.9494,"lng":-0.6053,"pop":10407,"2020":3,"2021":3,"2022":3,"2023":2,"2024":2},
+            {"commune":"Pessac","lat":44.8061,"lng":-0.6311,"pop":66000,"2020":19,"2021":28,"2022":28,"2023":28,"2024":28},
+            {"commune":"Saint-Aubin-de-Médoc","lat":44.9122,"lng":-0.7231,"pop":7800,"2020":3,"2021":4,"2022":4,"2023":4,"2024":4},
+            {"commune":"Saint-Louis-de-Montferrand","lat":44.9522,"lng":-0.5411,"pop":2113,"2020":1,"2021":1,"2022":1,"2023":1,"2024":1},
+            {"commune":"Saint-Médard-en-Jalles","lat":44.8961,"lng":-0.7181,"pop":33239,"2020":6,"2021":8,"2022":9,"2023":11,"2024":12},
+            {"commune":"Saint-Vincent-de-Paul","lat":44.9544,"lng":-0.4694,"pop":1000,"2020":0,"2021":0,"2022":0,"2023":0,"2024":0},
+            {"commune":"Talence","lat":44.8011,"lng":-0.5903,"pop":45869,"2020":12,"2021":12,"2022":14,"2023":16,"2024":16},
+            {"commune":"Villenave-d'Ornon","lat":44.7733,"lng":-0.5672,"pop":40500,"2020":12,"2021":11,"2022":10,"2023":11,"2024":17}
         ];
 
-        data.forEach(row => {
-            const agents = row["2024"];
+        policeData.forEach(row => {
+            const agents2024 = row["2024"];
+            const densite = row.pop > 0 ? (agents2024 / row.pop * 1000).toFixed(2) : 0;
             
-            // Couleurs Néon pour visibilité extrême sur fond noir satellite
-            let color = "#00ffff"; // Cyan
-            if (agents > 100) color = "#ff00ff"; // Magenta
-            else if (agents > 20) color = "#ffff00"; // Jaune
-            else if (agents === 0) color = "#ffffff"; // Blanc
+            // Couleurs plus discrètes (Dégradé de Bleu/Gris vers Orange doux)
+            let color = "#bdc3c7"; // Gris par défaut (aucun agent)
+            if (densite > 0.6) color = "#e67e22"; // Orange soutenu
+            else if (densite > 0.4) color = "#f39c12"; // Orange clair
+            else if (densite > 0.2) color = "#3498db"; // Bleu
+            else if (agents2024 > 0) color = "#95a5a6"; // Gris foncé
 
-            const radius = agents === 0 ? 5 : Math.max(8, Math.sqrt(agents) * 4);
+            const radius = Math.max(6, Math.sqrt(agents2024) * 3);
 
             const marker = L.circleMarker([row.lat, row.lng], {
                 radius: radius,
                 fillColor: color,
-                color: "#fff",
-                weight: 2,
-                opacity: 1,
-                fillOpacity: 0.8
+                color: "#ffffff",
+                weight: 1.5,
+                opacity: 0.8,
+                fillOpacity: 0.7
             }).addTo(map);
 
             marker.bindPopup(`
-                <div style="min-width:220px;">
-                    <h3 class="popup-title">${row.commune}</h3>
+                <div class="popup-card">
+                    <h3>${row.commune}</h3>
+                    <b>Évolution des effectifs :</b>
                     <table class="popup-table">
-                        <tr><th>Année</th><th>Effectif</th></tr>
+                        <tr><th>Année</th><th>Police (agents)</th></tr>
                         <tr><td>2020</td><td>${row["2020"]}</td></tr>
                         <tr><td>2021</td><td>${row["2021"]}</td></tr>
                         <tr><td>2022</td><td>${row["2022"]}</td></tr>
                         <tr><td>2023</td><td>${row["2023"]}</td></tr>
-                        <tr style="background:#00ffff; font-weight:bold;"><td>2024</td><td>${row["2024"]}</td></tr>
+                        <tr style="font-weight:bold; background:#edf2f7;"><td>2024</td><td>${row["2024"]}</td></tr>
                     </table>
+                    <div class="ratio-box">
+                        <b>Détails 2024 :</b><br>
+                        Population : ${row.pop.toLocaleString()} hab.<br>
+                        Taux : <span style="color:#e67e22; font-weight:bold;">${densite}</span> agents / 1000 hab.
+                    </div>
                 </div>
             `);
         });
 
-        // Légende Néon
+        // Légende discrète
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = '<b style="color:#00ffff;">Effectifs 2024</b><br>' +
-                '<i style="background: #ff00ff"></i> > 100 agents (Bordeaux)<br>' +
-                '<i style="background: #ffff00"></i> 21 - 100 agents<br>' +
-                '<i style="background: #00ffff"></i> 1 - 20 agents<br>' +
-                '<i style="background: #ffffff"></i> Aucun service';
+            div.innerHTML = '<b>Ratio (agents/1000 hab.)</b><br>' +
+                '<i style="background: #e67e22"></i> > 0.6<br>' +
+                '<i style="background: #f39c12"></i> 0.4 - 0.6<br>' +
+                '<i style="background: #3498db"></i> 0.2 - 0.4<br>' +
+                '<i style="background: #95a5a6"></i> < 0.2<br>' +
+                '<i style="background: #bdc3c7"></i> Aucun agent';
             return div;
         };
         legend.addTo(map);
