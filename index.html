@@ -3,74 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Effectifs de Police Municipale - Bordeaux Métropole (2024)</title>
+    <title>Police Municipale - Vue Satellite Bordeaux Métropole</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Helvetica Neue', Arial, sans-serif; }
-        #map { height: 100vh; width: 100%; background: #f0f0f0; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Segoe UI', Arial, sans-serif; }
+        #map { height: 100vh; width: 100%; background: #000; }
         .legend {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-            line-height: 1.8em;
-            font-size: 13px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+            line-height: 1.6em;
+            font-size: 12px;
+            color: #333;
         }
-        .legend i { width: 18px; height: 18px; float: left; margin-right: 10px; opacity: 0.8; border: 1px solid #999; }
-        .header-info {
+        .legend i { width: 14px; height: 14px; float: left; margin-right: 8px; opacity: 1; border: 1px solid #000; border-radius: 50%; }
+        .info-box {
             position: absolute;
             top: 20px;
-            left: 60px;
+            left: 50px;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 10px 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            border-left: 5px solid #2980b9;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: 1px solid #444;
         }
-        .header-info h1 { margin: 0; font-size: 18px; color: #2c3e50; }
-        .popup-table { width: 100%; border-collapse: collapse; }
-        .popup-table td { padding: 4px 0; font-size: 14px; }
-        .popup-table .label { color: #7f8c8d; font-weight: bold; width: 60%; }
-        .popup-table .value { text-align: right; font-weight: bold; color: #2c3e50; }
+        .info-box h1 { margin: 0; font-size: 16px; color: #f1c40f; }
     </style>
 </head>
 <body>
-    <div class="header-info">
-        <h1>Police Municipale : Effectifs 2024</h1>
-        <div style="font-size: 12px; color: #7f8c8d;">Données par commune - Métropole de Bordeaux</div>
+    <div class="info-box">
+        <h1>Carte de Localisation : Effectifs de Police 2024</h1>
+        <div style="font-size: 11px;">Fond Satellite Esri World Imagery</div>
     </div>
     <div id="map"></div>
 
     <script>
-        // Initialisation de la carte sur la Métropole
+        // Coordonnées de Bordeaux Métropole
         const map = L.map('map').setView([44.86, -0.58], 11);
 
-        // Fond de carte clair pour faire ressortir les points
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{y}/{x}{r}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        // FOND SATELLITE (Esri World Imagery) - Pas d'OpenStreetMap
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
         }).addTo(map);
 
-        // Ajout des limites de la métropole
-        fetch('https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements/33-gironde/communes-33-gironde.geojson')
-            .then(res => res.json())
-            .then(data => {
-                const codesMetropole = ["33003", "33004", "33013", "33032", "33039", "33056", "33063", "33069", "33075", "33096", "33119", "33162", "33167", "33192", "33200", "33249", "33273", "33281", "33312", "33318", "33433", "33449", "33519", "33522", "33533", "33540", "33550", "33563"];
-                L.geoJSON(data, {
-                    filter: f => codesMetropole.includes(f.properties.code),
-                    style: { color: "#34495e", weight: 1, fillOpacity: 0.05, fillColor: "#34495e" }
-                }).addTo(map);
-            });
-
-        // Chargement des données CSV
+        // Lecture DIRECTE du CSV "police_map_data.csv"
         Papa.parse("police_map_data.csv", {
             download: true,
             header: true,
             skipEmptyLines: true,
             complete: function(results) {
-                console.log("Points chargés :", results.data.length);
                 results.data.forEach(row => {
                     const lat = parseFloat(row.lat);
                     const lng = parseFloat(row.lng);
@@ -78,36 +63,29 @@
                     const densite = parseFloat(row.densite);
 
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        // Couleur basée sur la densité (Taux pour 1000 hab)
-                        const color = densite > 0.6 ? "#d35400" : // Orange foncé
-                                      densite > 0.4 ? "#e67e22" : // Orange
-                                      densite > 0.2 ? "#f39c12" : // Jaune foncé
-                                      agents > 0    ? "#f1c40f" : // Jaune
-                                                      "#bdc3c7";  // Gris (aucun agent)
+                        // Couleurs très vives pour le fond satellite (Néon/Flashy)
+                        const color = densite > 0.6 ? "#FF0000" : // Rouge flash
+                                      densite > 0.4 ? "#FF8C00" : // Orange foncé
+                                      densite > 0.2 ? "#FFFF00" : // Jaune flash
+                                      agents > 0    ? "#00FF00" : // Vert flash
+                                                      "#FFFFFF";  // Blanc (aucun agent)
 
-                        // Taille proportionnelle au nombre d'agents
-                        const radius = agents === 0 ? 4 : Math.max(6, Math.sqrt(agents) * 3);
-
+                        // Marqueurs circulaires plus visibles avec bordure noire
                         const marker = L.circleMarker([lat, lng], {
-                            radius: radius,
+                            radius: agents === 0 ? 5 : Math.max(8, Math.sqrt(agents) * 3),
                             fillColor: color,
-                            color: "#fff",
+                            color: "#fff", // Bordure blanche pour contraste
                             weight: 2,
                             opacity: 1,
                             fillOpacity: 0.9
                         }).addTo(map);
 
                         marker.bindPopup(`
-                            <div style="min-width:180px">
-                                <h3 style="margin:0 0 10px 0; border-bottom:1px solid #eee; padding-bottom:5px;">${row.commune}</h3>
-                                <table class="popup-table">
-                                    <tr><td class="label">Agents :</td><td class="value">${agents}</td></tr>
-                                    <tr><td class="label">Population :</td><td class="value">${parseInt(row.population).toLocaleString()}</td></tr>
-                                    <tr style="border-top:1px dashed #eee">
-                                        <td class="label">Taux / 1000 hab :</td>
-                                        <td class="value" style="color:#d35400">${densite}</td>
-                                    </tr>
-                                </table>
+                            <div style="text-align:center;">
+                                <b style="font-size:14px;">${row.commune}</b><br>
+                                <hr style="margin:5px 0;">
+                                <b>Effectif :</b> ${agents} agents<br>
+                                <b>Densité :</b> ${densite} agents / 1000 hab.
                             </div>
                         `);
                     }
@@ -119,12 +97,12 @@
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = '<b>Taux pour 1000 habitants</b><br>' +
-                '<i style="background: #d35400"></i> > 0.6<br>' +
-                '<i style="background: #e67e22"></i> 0.4 - 0.6<br>' +
-                '<i style="background: #f39c12"></i> 0.2 - 0.4<br>' +
-                '<i style="background: #f1c40f"></i> < 0.2<br>' +
-                '<i style="background: #bdc3c7"></i> Aucun service';
+            div.innerHTML = '<b>Densité / 1000 hab.</b><br>' +
+                '<i style="background: #FF0000"></i> > 0.6<br>' +
+                '<i style="background: #FF8C00"></i> 0.4 - 0.6<br>' +
+                '<i style="background: #FFFF00"></i> 0.2 - 0.4<br>' +
+                '<i style="background: #00FF00"></i> < 0.2<br>' +
+                '<i style="background: #FFFFFF"></i> Aucun service';
             return div;
         };
         legend.addTo(map);
