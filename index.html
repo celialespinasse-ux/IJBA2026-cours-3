@@ -53,18 +53,19 @@
             attribution: '&copy; Esri World Imagery'
         }).addTo(map);
 
-        // Délimitation de la Métropole
+        // 1. Délimitation de la Métropole (Désactivé pour ne pas bloquer les clics)
         fetch('https://raw.githubusercontent.com/gregoiredavid/france-geojson/master/departements/33-gironde/communes-33-gironde.geojson')
             .then(res => res.json())
             .then(data => {
                 const codesMetropole = ["33003", "33004", "33013", "33032", "33039", "33056", "33063", "33069", "33075", "33096", "33119", "33162", "33167", "33192", "33200", "33249", "33273", "33281", "33312", "33318", "33433", "33449", "33519", "33522", "33533", "33540", "33550", "33563"];
                 L.geoJSON(data, {
                     filter: f => codesMetropole.includes(f.properties.code),
-                    style: { color: "#ffffff", weight: 1.5, fillOpacity: 0.1, fillColor: "#ffffff", dashArray: '5, 5' }
+                    interactive: false, // TRÈS IMPORTANT : empêche la délimitation de capturer le clic
+                    style: { color: "#ffffff", weight: 1.5, fillOpacity: 0.05, fillColor: "#ffffff", dashArray: '5, 5' }
                 }).addTo(map);
             });
 
-        // Données intégrées avec Population 2024
+        // 2. Données intégrées
         const policeData = [
             {"commune":"Ambarès-et-Lagrave","lat":44.9244,"lng":-0.4851,"pop":17500,"2020":3,"2021":3,"2022":3,"2023":3,"2024":5},
             {"commune":"Ambès","lat":45.0131,"lng":-0.5314,"pop":3291,"2020":0,"2021":0,"2022":0,"2023":0,"2024":0},
@@ -96,34 +97,36 @@
             {"commune":"Villenave-d'Ornon","lat":44.7733,"lng":-0.5672,"pop":40500,"2020":12,"2021":11,"2022":10,"2023":11,"2024":17}
         ];
 
+        // 3. Affichage des points (à la fin pour être au-dessus)
         policeData.forEach(row => {
             const agents2024 = row["2024"];
-            const densite = row.pop > 0 ? (agents2024 / row.pop * 1000).toFixed(2) : 0;
+            const pop = row.pop;
+            const densite = pop > 0 ? (agents2024 / pop * 1000).toFixed(2) : 0;
             
-            // Couleurs plus discrètes (Dégradé de Bleu/Gris vers Orange doux)
-            let color = "#bdc3c7"; // Gris par défaut (aucun agent)
-            if (densite > 0.6) color = "#e67e22"; // Orange soutenu
-            else if (densite > 0.4) color = "#f39c12"; // Orange clair
-            else if (densite > 0.2) color = "#3498db"; // Bleu
-            else if (agents2024 > 0) color = "#95a5a6"; // Gris foncé
+            let color = "#bdc3c7";
+            if (densite > 0.6) color = "#e67e22";
+            else if (densite > 0.4) color = "#f39c12";
+            else if (densite > 0.2) color = "#3498db";
+            else if (agents2024 > 0) color = "#95a5a6";
 
-            const radius = Math.max(6, Math.sqrt(agents2024) * 3);
+            const radius = Math.max(7, Math.sqrt(agents2024) * 3);
 
             const marker = L.circleMarker([row.lat, row.lng], {
                 radius: radius,
                 fillColor: color,
                 color: "#ffffff",
-                weight: 1.5,
-                opacity: 0.8,
-                fillOpacity: 0.7
+                weight: 2,
+                opacity: 1,
+                fillOpacity: 0.8,
+                bubblePressing: true // Aide Leaflet à gérer les clics proches
             }).addTo(map);
 
-            marker.bindPopup(`
+            const popupContent = `
                 <div class="popup-card">
                     <h3>${row.commune}</h3>
-                    <b>Évolution des effectifs :</b>
+                    <b>Effectif de police (agents) :</b>
                     <table class="popup-table">
-                        <tr><th>Année</th><th>Police (agents)</th></tr>
+                        <tr><th>Année</th><th>Effectif</th></tr>
                         <tr><td>2020</td><td>${row["2020"]}</td></tr>
                         <tr><td>2021</td><td>${row["2021"]}</td></tr>
                         <tr><td>2022</td><td>${row["2022"]}</td></tr>
@@ -132,14 +135,15 @@
                     </table>
                     <div class="ratio-box">
                         <b>Détails 2024 :</b><br>
-                        Population : ${row.pop.toLocaleString()} hab.<br>
+                        Population : ${pop} hab.<br>
                         Taux : <span style="color:#e67e22; font-weight:bold;">${densite}</span> agents / 1000 hab.
                     </div>
                 </div>
-            `);
+            `;
+
+            marker.bindPopup(popupContent, { maxWidth: 300 });
         });
 
-        // Légende discrète
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
