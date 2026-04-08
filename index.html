@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Police Municipale - Vue Satellite Bordeaux Métropole</title>
+    <title>Évolution Police Municipale - Bordeaux Métropole</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -16,42 +16,43 @@
             border-radius: 5px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
             line-height: 1.6em;
-            font-size: 12px;
-            color: #333;
+            font-size: 13px;
         }
-        .legend i { width: 14px; height: 14px; float: left; margin-right: 8px; opacity: 1; border: 1px solid #000; border-radius: 50%; }
+        .legend i { width: 14px; height: 14px; float: left; margin-right: 8px; border-radius: 50%; border: 1px solid #000; }
         .info-box {
             position: absolute;
             top: 20px;
             left: 50px;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 10px 15px;
+            padding: 12px 20px;
             border-radius: 5px;
-            border: 1px solid #444;
+            border-left: 5px solid #f1c40f;
         }
-        .info-box h1 { margin: 0; font-size: 16px; color: #f1c40f; }
+        .info-box h1 { margin: 0; font-size: 18px; color: #f1c40f; }
+        .popup-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+        .popup-table th, .popup-table td { border: 1px solid #ddd; padding: 5px; text-align: center; font-size: 12px; }
+        .popup-table th { background-color: #f8f9fa; color: #333; }
     </style>
 </head>
 <body>
     <div class="info-box">
-        <h1>Carte de Localisation : Effectifs de Police 2024</h1>
-        <div style="font-size: 11px;">Fond Satellite Esri World Imagery</div>
+        <h1>Police Municipale : Évolution 2020-2024</h1>
+        <div style="font-size: 12px; color: #bdc3c7;">Cliquez sur un point pour voir l'historique</div>
     </div>
     <div id="map"></div>
 
     <script>
-        // Coordonnées de Bordeaux Métropole
         const map = L.map('map').setView([44.86, -0.58], 11);
 
-        // FOND SATELLITE (Esri World Imagery) - Pas d'OpenStreetMap
+        // Fond Satellite Esri (Pas d'OpenStreetMap)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
         }).addTo(map);
 
-        // Lecture DIRECTE du CSV "police_map_data.csv"
-        Papa.parse("police_map_data.csv", {
+        // Lecture du CSV d'évolution
+        Papa.parse("police_evolution.csv", {
             download: true,
             header: true,
             skipEmptyLines: true,
@@ -59,35 +60,41 @@
                 results.data.forEach(row => {
                     const lat = parseFloat(row.lat);
                     const lng = parseFloat(row.lng);
-                    const agents = parseInt(row.agents);
-                    const densite = parseFloat(row.densite);
+                    const agents2024 = parseInt(row['2024']);
 
                     if (!isNaN(lat) && !isNaN(lng)) {
-                        // Couleurs très vives pour le fond satellite (Néon/Flashy)
-                        const color = densite > 0.6 ? "#FF0000" : // Rouge flash
-                                      densite > 0.4 ? "#FF8C00" : // Orange foncé
-                                      densite > 0.2 ? "#FFFF00" : // Jaune flash
-                                      agents > 0    ? "#00FF00" : // Vert flash
-                                                      "#FFFFFF";  // Blanc (aucun agent)
+                        // Couleur vive pour visibilité max sur satellite
+                        let color = "#00FF00"; // Vert par défaut
+                        if (agents2024 > 100) color = "#FF0000"; // Rouge (Bordeaux)
+                        else if (agents2024 > 20) color = "#FF8C00"; // Orange
+                        else if (agents2024 > 10) color = "#FFFF00"; // Jaune
+                        else if (agents2024 === 0) color = "#FFFFFF"; // Blanc
 
-                        // Marqueurs circulaires plus visibles avec bordure noire
+                        const radius = agents2024 === 0 ? 5 : Math.max(7, Math.sqrt(agents2024) * 3);
+
                         const marker = L.circleMarker([lat, lng], {
-                            radius: agents === 0 ? 5 : Math.max(8, Math.sqrt(agents) * 3),
+                            radius: radius,
                             fillColor: color,
-                            color: "#fff", // Bordure blanche pour contraste
+                            color: "#fff",
                             weight: 2,
                             opacity: 1,
                             fillOpacity: 0.9
                         }).addTo(map);
 
-                        marker.bindPopup(`
-                            <div style="text-align:center;">
-                                <b style="font-size:14px;">${row.commune}</b><br>
-                                <hr style="margin:5px 0;">
-                                <b>Effectif :</b> ${agents} agents<br>
-                                <b>Densité :</b> ${densite} agents / 1000 hab.
-                            </div>
-                        `);
+                        // Popup avec tableau d'évolution
+                        let popupContent = `<div style="min-width:200px">
+                            <h3 style="margin:0; border-bottom:2px solid ${color}; padding-bottom:5px;">${row.commune}</h3>
+                            <table class="popup-table">
+                                <tr><th>Année</th><th>Effectif</th></tr>
+                                <tr><td>2020</td><td>${row['2020']}</td></tr>
+                                <tr><td>2021</td><td>${row['2021']}</td></tr>
+                                <tr><td>2022</td><td>${row['2022']}</td></tr>
+                                <tr><td>2023</td><td>${row['2023']}</td></tr>
+                                <tr style="font-weight:bold; background:#fff9db;"><td>2024</td><td>${row['2024']}</td></tr>
+                            </table>
+                        </div>`;
+
+                        marker.bindPopup(popupContent);
                     }
                 });
             }
@@ -97,11 +104,11 @@
         const legend = L.control({position: 'bottomright'});
         legend.onAdd = function (map) {
             const div = L.DomUtil.create('div', 'legend');
-            div.innerHTML = '<b>Densité / 1000 hab.</b><br>' +
-                '<i style="background: #FF0000"></i> > 0.6<br>' +
-                '<i style="background: #FF8C00"></i> 0.4 - 0.6<br>' +
-                '<i style="background: #FFFF00"></i> 0.2 - 0.4<br>' +
-                '<i style="background: #00FF00"></i> < 0.2<br>' +
+            div.innerHTML = '<b>Effectifs 2024</b><br>' +
+                '<i style="background: #FF0000"></i> > 100 agents<br>' +
+                '<i style="background: #FF8C00"></i> 21 - 100 agents<br>' +
+                '<i style="background: #FFFF00"></i> 11 - 20 agents<br>' +
+                '<i style="background: #00FF00"></i> 1 - 10 agents<br>' +
                 '<i style="background: #FFFFFF"></i> Aucun service';
             return div;
         };
