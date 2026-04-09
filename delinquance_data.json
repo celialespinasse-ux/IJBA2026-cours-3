@@ -1,0 +1,688 @@
+{
+  "years": [
+    "2020",
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+  ],
+  "data": {
+    "Ambarès-et-Lagrave": {
+      "Vols (total)": [
+        16.0,
+        13.0,
+        12.0,
+        11.0,
+        10.0,
+        20.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        3.0,
+        2.0,
+        3.0,
+        5.0,
+        2.0
+      ],
+      "Cambriolages": [
+        10.0,
+        26.0,
+        20.0,
+        22.0,
+        25.0,
+        45.0
+      ]
+    },
+    "Ambès": {
+      "Vols (total)": [
+        5.0,
+        8.0,
+        4.0,
+        7.0,
+        12.0,
+        12.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        5.0,
+        5.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "Cambriolages": [
+        3.0,
+        8.0,
+        7.0,
+        12.0,
+        16.0,
+        8.0
+      ]
+    },
+    "Artigues-près-Bordeaux": {
+      "Vols (total)": [
+        18.0,
+        16.0,
+        14.0,
+        20.0,
+        17.0,
+        12.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        2.0,
+        3.0,
+        2.0,
+        1.0,
+        3.0
+      ],
+      "Cambriolages": [
+        23.0,
+        15.0,
+        16.0,
+        12.0,
+        10.0,
+        8.0
+      ]
+    },
+    "Bassens": {
+      "Vols (total)": [
+        18.0,
+        14.0,
+        18.0,
+        15.0,
+        17.0,
+        14.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        3.0,
+        3.0,
+        4.0,
+        3.0,
+        3.0
+      ],
+      "Cambriolages": [
+        9.0,
+        10.0,
+        6.0,
+        8.0,
+        10.0,
+        6.0
+      ]
+    },
+    "Bègles": {
+      "Vols (total)": [
+        29.0,
+        26.0,
+        23.0,
+        33.0,
+        32.0,
+        33.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        2.0,
+        3.0,
+        3.0,
+        3.0,
+        3.0
+      ],
+      "Cambriolages": [
+        20.0,
+        11.0,
+        13.0,
+        14.0,
+        14.0,
+        8.0
+      ]
+    },
+    "Blanquefort": {
+      "Vols (total)": [
+        44.0,
+        46.0,
+        35.0,
+        30.0,
+        39.0,
+        31.0
+      ],
+      "Violences hors cadre familial": [
+        4.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0,
+        6.0
+      ],
+      "Cambriolages": [
+        31.0,
+        19.0,
+        21.0,
+        27.0,
+        23.0,
+        16.0
+      ]
+    },
+    "Bordeaux": {
+      "Vols (total)": [
+        57.0,
+        60.0,
+        58.0,
+        65.0,
+        66.0,
+        68.0
+      ],
+      "Violences hors cadre familial": [
+        5.0,
+        4.0,
+        6.0,
+        6.0,
+        5.0,
+        5.0
+      ],
+      "Cambriolages": [
+        12.0,
+        11.0,
+        10.0,
+        10.0,
+        9.0,
+        7.0
+      ]
+    },
+    "Bruges": {
+      "Vols (total)": [
+        20.0,
+        23.0,
+        21.0,
+        21.0,
+        29.0,
+        26.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        2.0,
+        2.0,
+        3.0,
+        2.0,
+        1.0
+      ],
+      "Cambriolages": [
+        10.0,
+        12.0,
+        12.0,
+        10.0,
+        11.0,
+        6.0
+      ]
+    },
+    "Carbon-Blanc": {
+      "Vols (total)": [
+        12.0,
+        9.0,
+        15.0,
+        11.0,
+        12.0,
+        11.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        3.0,
+        3.0,
+        2.0,
+        3.0,
+        3.0
+      ],
+      "Cambriolages": [
+        12.0,
+        12.0,
+        10.0,
+        11.0,
+        8.0,
+        9.0
+      ]
+    },
+    "Cenon": {
+      "Vols (total)": [
+        27.0,
+        24.0,
+        15.0,
+        18.0,
+        24.0,
+        20.0
+      ],
+      "Violences hors cadre familial": [
+        3.0,
+        3.0,
+        3.0,
+        4.0,
+        3.0,
+        3.0
+      ],
+      "Cambriolages": [
+        14.0,
+        9.0,
+        8.0,
+        7.0,
+        8.0,
+        6.0
+      ]
+    },
+    "Floirac": {
+      "Vols (total)": [
+        34.0,
+        35.0,
+        37.0,
+        38.0,
+        34.0,
+        42.0
+      ],
+      "Violences hors cadre familial": [
+        6.0,
+        3.0,
+        3.0,
+        3.0,
+        4.0,
+        5.0
+      ],
+      "Cambriolages": [
+        33.0,
+        19.0,
+        21.0,
+        14.0,
+        14.0,
+        18.0
+      ]
+    },
+    "Gradignan": {
+      "Vols (total)": [
+        15.0,
+        13.0,
+        12.0,
+        14.0,
+        14.0,
+        16.0
+      ],
+      "Violences hors cadre familial": [
+        3.0,
+        3.0,
+        3.0,
+        3.0,
+        4.0,
+        4.0
+      ],
+      "Cambriolages": [
+        11.0,
+        11.0,
+        12.0,
+        12.0,
+        10.0,
+        9.0
+      ]
+    },
+    "Le Bouscat": {
+      "Vols (total)": [
+        17.0,
+        21.0,
+        19.0,
+        18.0,
+        24.0,
+        21.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        2.0,
+        1.0
+      ],
+      "Cambriolages": [
+        12.0,
+        12.0,
+        11.0,
+        9.0,
+        11.0,
+        8.0
+      ]
+    },
+    "Le Haillan": {
+      "Vols (total)": [
+        17.0,
+        18.0,
+        20.0,
+        16.0,
+        17.0,
+        17.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        1.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "Cambriolages": [
+        13.0,
+        14.0,
+        16.0,
+        13.0,
+        12.0,
+        16.0
+      ]
+    },
+    "le Taillan-Médoc/Eysines": {
+      "Vols (total)": [
+        30.0,
+        40.0,
+        30.0,
+        28.0,
+        34.0,
+        24.0
+      ],
+      "Violences hors cadre familial": [
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        5.0,
+        4.0
+      ],
+      "Cambriolages": [
+        25.0,
+        28.0,
+        26.0,
+        27.0,
+        35.0,
+        27.0
+      ]
+    },
+    "Lormont": {
+      "Vols (total)": [
+        30.0,
+        23.0,
+        23.0,
+        25.0,
+        29.0,
+        24.0
+      ],
+      "Violences hors cadre familial": [
+        3.0,
+        4.0,
+        3.0,
+        4.0,
+        5.0,
+        4.0
+      ],
+      "Cambriolages": [
+        8.0,
+        6.0,
+        6.0,
+        7.0,
+        5.0,
+        3.0
+      ]
+    },
+    "Martignas-sur-Jalle": {
+      "Vols (total)": [
+        4.0,
+        4.0,
+        5.0,
+        5.0,
+        2.0,
+        4.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        1.0,
+        1.0
+      ],
+      "Cambriolages": [
+        16.0,
+        12.0,
+        12.0,
+        10.0,
+        3.0,
+        4.0
+      ]
+    },
+    "Mérignac": {
+      "Vols (total)": [
+        19.0,
+        18.0,
+        16.0,
+        19.0,
+        20.0,
+        21.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0
+      ],
+      "Cambriolages": [
+        10.0,
+        10.0,
+        8.0,
+        11.0,
+        10.0,
+        9.0
+      ]
+    },
+    "Pessac": {
+      "Vols (total)": [
+        18.0,
+        19.0,
+        15.0,
+        20.0,
+        20.0,
+        19.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        1.0,
+        2.0,
+        1.0,
+        1.0,
+        2.0
+      ],
+      "Cambriolages": [
+        14.0,
+        11.0,
+        10.0,
+        11.0,
+        13.0,
+        10.0
+      ]
+    },
+    "Saint-Médard-en-Jalles": {
+      "Vols (total)": [
+        14.0,
+        20.0,
+        17.0,
+        15.0,
+        14.0,
+        15.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        2.0,
+        2.0,
+        3.0,
+        3.0,
+        4.0
+      ],
+      "Cambriolages": [
+        22.0,
+        16.0,
+        20.0,
+        28.0,
+        26.0,
+        22.0
+      ]
+    },
+    "Talence": {
+      "Vols (total)": [
+        31.0,
+        29.0,
+        23.0,
+        23.0,
+        24.0,
+        21.0
+      ],
+      "Violences hors cadre familial": [
+        1.0,
+        2.0,
+        2.0,
+        2.0,
+        2.0,
+        3.0
+      ],
+      "Cambriolages": [
+        9.0,
+        10.0,
+        11.0,
+        9.0,
+        11.0,
+        8.0
+      ]
+    },
+    "Villenave-d'Ornon": {
+      "Vols (total)": [
+        18.0,
+        17.0,
+        16.0,
+        16.0,
+        18.0,
+        18.0
+      ],
+      "Violences hors cadre familial": [
+        2.0,
+        1.0,
+        2.0,
+        2.0,
+        2.0,
+        3.0
+      ],
+      "Cambriolages": [
+        13.0,
+        16.0,
+        17.0,
+        13.0,
+        10.0,
+        6.0
+      ]
+    },
+    "blanquefort": {
+      "Vols (total)": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Cambriolages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "gradignan": {
+      "Vols (total)": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Cambriolages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "talence": {
+      "Vols (total)": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Cambriolages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "artigues-près-bordeaux": {
+      "Vols (total)": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Violences hors cadre familial": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "Cambriolages": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  }
+}
