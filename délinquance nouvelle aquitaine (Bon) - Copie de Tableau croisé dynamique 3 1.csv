@@ -1,0 +1,231 @@
+SUM de taux_pour_mille,,annee,,,,,,
+indicateur,nom communes,2020,2021,2022,2023,2024,2025,Total général
+Cambriolages de logement,Ambarès-et-Lagrave,10,26,20,22,25,45,148
+,Ambès,3,8,7,12,16,8,55
+,Artigues-près-Bordeaux,23,15,16,12,10,8,84
+,Bassens,9,10,6,8,10,6,49
+,Bègles,20,11,13,14,14,8,81
+,Blanquefort,31,19,21,27,23,16,137
+,Bordeaux,12,11,10,10,9,7,59
+,Bruges,10,12,12,10,11,6,61
+,Carbon-Blanc,12,12,10,11,8,9,62
+,Cenon,14,9,8,7,8,6,53
+,Floirac,33,19,21,14,14,18,119
+,Gradignan,11,11,12,12,10,9,64
+,Le Bouscat,12,12,11,9,11,8,63
+,Le Haillan,13,14,16,13,12,16,83
+,le Taillan-Médoc/Eysines,25,28,26,27,35,27,168
+,Lormont,8,6,6,7,5,3,35
+,Martignas-sur-Jalle,16,12,12,10,3,4,57
+,Mérignac,10,10,8,11,10,9,57
+,Pessac,14,11,10,11,13,10,69
+,Saint-Médard-en-Jalles,22,16,20,28,26,22,133
+,Talence,9,10,11,9,11,8,59
+,Villenave-d'Ornon,13,16,17,13,10,6,74
+Destructions et dégradations volontaires,Ambarès-et-Lagrave,13,16,17,14,15,30,105
+,Ambès,10,7,9,6,6,7,45
+,Artigues-près-Bordeaux,7,9,10,8,10,9,53
+,Bassens,11,12,10,8,9,11,61
+,Bègles,18,18,13,12,15,16,92
+,Blanquefort,20,22,18,16,17,13,107
+,Bordeaux,16,15,13,12,14,15,84
+,Bruges,9,10,8,7,9,10,53
+,Carbon-Blanc,10,7,7,6,6,7,43
+,Cenon,14,19,14,12,12,13,84
+,Floirac,16,21,16,19,17,20,110
+,Gradignan,10,8,8,8,8,8,51
+,Le Bouscat,10,13,9,8,10,10,60
+,Le Haillan,10,11,8,6,6,9,50
+,le Taillan-Médoc/Eysines,17,19,13,14,14,14,92
+,Lormont,14,16,16,15,14,14,89
+,Martignas-sur-Jalle,3,4,4,4,3,3,22
+,Mérignac,9,9,7,7,8,10,50
+,Pessac,9,11,7,9,10,9,55
+,Saint-Médard-en-Jalles,10,13,10,9,9,9,59
+,Talence,12,11,8,8,11,11,61
+,Villenave-d'Ornon,11,10,8,8,10,10,57
+Trafic de stupéfiants,Ambarès-et-Lagrave,0,,,,,0,0
+,Bègles,,,,1,1,1,2
+,blanquefort,,,,,,0,0
+,Bordeaux,1,2,1,1,1,1,7
+,Cenon,,0,1,0,0,1,3
+,Floirac,0,0,0,,,,0
+,gradignan,,,0,1,1,1,3
+,Le Bouscat,,,,,0,0,1
+,le Taillan-Médoc/Eysines,0,0,1,1,1,0,4
+,Lormont,,0,0,0,1,1,3
+,Martignas-sur-Jalle,,,0,0,0,0,0
+,Mérignac,0,0,0,0,0,0,2
+,Pessac,0,0,0,0,1,0,2
+,Saint-Médard-en-Jalles,,0,0,,,0,0
+,talence,,,,1,0,1,2
+,Villenave-d'Ornon,,,,0,,,0
+Usage de stupéfiants,Ambarès-et-Lagrave,1,2,1,2,2,2,10
+,artigues-près-bordeaux,,,,,2,1,3
+,Bassens,,,,1,1,2,3
+,Bègles,1,1,1,1,1,1,7
+,Blanquefort,1,1,2,1,3,3,11
+,Bordeaux,3,5,5,6,6,7,33
+,Bruges,1,1,3,2,3,2,12
+,Carbon-Blanc,1,1,1,,,,3
+,Cenon,2,4,3,3,2,3,17
+,Floirac,1,5,3,2,3,3,17
+,Gradignan,1,1,1,2,2,2,10
+,Le Bouscat,0,2,5,1,2,1,11
+,Le Haillan,,1,1,1,1,1,5
+,le Taillan-Médoc/Eysines,1,2,3,3,3,3,14
+,Lormont,1,4,3,3,2,3,17
+,Mérignac,1,1,2,1,2,1,8
+,Pessac,1,1,1,1,1,1,6
+,Saint-Médard-en-Jalles,3,2,1,1,2,1,10
+,Talence,1,1,1,1,1,1,7
+,Villenave-d'Ornon,0,1,1,1,1,1,4
+Violences physiques hors cadre familial,Ambarès-et-Lagrave,2,3,2,3,5,2,17
+,Ambès,,5,5,2,2,2,17
+,Artigues-près-Bordeaux,1,2,3,2,1,3,10
+,Bassens,2,3,3,4,3,3,18
+,Bègles,2,2,3,3,3,3,16
+,Blanquefort,4,6,6,6,6,6,34
+,Bordeaux,5,4,6,6,5,5,31
+,Bruges,1,2,2,3,2,1,12
+,Carbon-Blanc,2,3,3,2,3,3,15
+,Cenon,3,3,3,4,3,3,19
+,Floirac,6,3,3,3,4,5,23
+,Gradignan,3,3,3,3,4,4,21
+,Le Bouscat,1,1,1,1,2,1,9
+,Le Haillan,1,1,2,2,2,2,10
+,le Taillan-Médoc/Eysines,4,4,5,5,5,4,28
+,Lormont,3,4,3,4,5,4,24
+,Martignas-sur-Jalle,,,,,1,1,2
+,Mérignac,1,2,2,2,2,2,11
+,Pessac,2,1,2,1,1,2,9
+,Saint-Médard-en-Jalles,1,2,2,3,3,4,16
+,Talence,1,2,2,2,2,3,12
+,Villenave-d'Ornon,2,1,2,2,2,3,11
+Violences sexuelles,Ambarès-et-Lagrave,1,2,2,2,2,2,11
+,Artigues-près-Bordeaux,1,1,1,1,1,2,8
+,Bassens,1,1,1,1,1,2,7
+,Bègles,1,2,2,2,2,2,10
+,Blanquefort,1,2,2,2,2,3,12
+,Bordeaux,2,2,3,3,3,3,15
+,Bruges,1,1,1,1,2,2,8
+,Carbon-Blanc,,,,,2,2,4
+,Cenon,1,2,1,2,1,2,10
+,Floirac,1,2,2,1,2,1,9
+,Gradignan,1,1,2,1,1,2,8
+,Le Bouscat,1,1,1,1,1,1,5
+,Le Haillan,1,1,1,1,2,1,8
+,le Taillan-Médoc/Eysines,3,2,3,3,4,3,18
+,Lormont,1,1,2,2,3,4,13
+,Martignas-sur-Jalle,,,,2,1,2,5
+,Mérignac,1,1,2,2,2,2,9
+,Pessac,1,2,1,2,1,1,8
+,Saint-Médard-en-Jalles,1,1,1,1,1,2,7
+,Talence,1,2,2,1,2,2,10
+,Villenave-d'Ornon,1,1,1,1,1,2,6
+Vols d'accessoires sur véhicules,Ambarès-et-Lagrave,2,1,1,1,1,1,8
+,Ambès,,,,2,6,2,10
+,Artigues-près-Bordeaux,4,3,2,3,4,1,16
+,Bassens,3,2,3,2,2,2,13
+,Bègles,2,2,2,2,2,2,11
+,Blanquefort,6,4,6,5,5,4,29
+,Bordeaux,1,1,1,1,1,1,8
+,Bruges,2,3,2,2,2,2,13
+,Carbon-Blanc,2,1,2,2,1,1,9
+,Cenon,2,2,1,1,2,2,9
+,Floirac,2,3,2,3,1,2,13
+,Gradignan,1,2,2,2,2,1,10
+,Le Bouscat,1,1,1,0,1,1,5
+,Le Haillan,2,3,3,2,3,3,15
+,le Taillan-Médoc/Eysines,4,5,4,3,5,3,25
+,Lormont,3,4,2,4,4,2,19
+,Mérignac,2,2,2,2,3,2,12
+,Pessac,1,1,1,1,2,2,8
+,Saint-Médard-en-Jalles,1,1,1,1,1,1,5
+,Talence,1,2,1,1,1,1,7
+,Villenave-d'Ornon,2,2,2,1,2,2,11
+Vols dans les véhicules,Ambarès-et-Lagrave,8,6,4,3,3,3,26
+,Ambès,2,5,4,2,3,5,20
+,Artigues-près-Bordeaux,5,3,4,6,6,5,29
+,Bassens,6,3,4,4,5,3,25
+,Bègles,10,9,7,12,11,11,60
+,Blanquefort,16,21,10,10,13,12,83
+,Bordeaux,16,17,15,22,21,21,112
+,Bruges,6,9,7,9,16,12,59
+,Carbon-Blanc,4,3,6,3,5,4,25
+,Cenon,12,8,4,5,7,5,41
+,Floirac,12,10,14,12,12,13,73
+,Gradignan,6,3,3,4,4,7,27
+,Le Bouscat,6,7,5,7,11,8,45
+,Le Haillan,5,4,6,5,6,5,32
+,le Taillan-Médoc/Eysines,8,16,8,10,13,8,63
+,Lormont,10,6,6,7,9,7,46
+,Martignas-sur-Jalle,1,1,1,1,,,4
+,Mérignac,6,5,3,6,7,7,34
+,Pessac,7,6,4,9,9,7,42
+,Saint-Médard-en-Jalles,3,6,3,3,4,6,25
+,Talence,13,12,8,7,10,8,57
+,Villenave-d'Ornon,8,5,4,6,6,6,36
+Vols de véhicule,Ambarès-et-Lagrave,2,2,2,2,2,2,11
+,Ambès,,,,3,3,3,8
+,Artigues-près-Bordeaux,3,2,3,3,3,2,17
+,Bassens,4,4,4,3,3,2,19
+,Bègles,3,2,2,4,3,3,17
+,Blanquefort,8,8,7,4,9,4,40
+,Bordeaux,4,4,3,4,4,3,21
+,Bruges,4,3,3,2,3,3,18
+,Carbon-Blanc,2,1,1,1,1,1,8
+,Cenon,3,3,2,4,4,3,19
+,Floirac,2,4,4,2,2,4,19
+,Gradignan,2,2,1,2,2,2,11
+,Le Bouscat,3,3,3,3,3,2,16
+,Le Haillan,3,3,4,2,3,2,18
+,le Taillan-Médoc/Eysines,6,6,6,5,6,3,32
+,Lormont,4,3,4,5,4,4,24
+,Martignas-sur-Jalle,,,1,1,1,1,3
+,Mérignac,3,2,2,3,2,2,14
+,Pessac,2,2,2,1,1,1,9
+,Saint-Médard-en-Jalles,2,2,4,3,2,2,15
+,Talence,3,3,2,2,2,1,13
+,Villenave-d'Ornon,2,2,2,3,3,2,15
+Vols sans violence contre des personnes,Ambarès-et-Lagrave,4,4,5,5,4,14,36
+,Ambès,3,3,,,,2,7
+,Artigues-près-Bordeaux,6,8,5,8,4,4,35
+,Bassens,5,5,7,6,7,7,37
+,Bègles,13,12,11,14,15,15,80
+,Blanquefort,14,12,12,11,11,10,70
+,Bordeaux,31,34,35,35,36,39,209
+,Bruges,7,7,8,7,7,8,44
+,Carbon-Blanc,4,4,6,5,5,5,29
+,Cenon,8,10,7,7,10,9,51
+,Floirac,18,17,16,20,18,22,111
+,Gradignan,6,6,6,6,6,6,37
+,Le Bouscat,6,9,9,7,8,9,48
+,Le Haillan,7,8,7,7,5,7,41
+,le Taillan-Médoc/Eysines,11,12,12,10,10,10,64
+,Lormont,10,9,10,8,11,9,56
+,Martignas-sur-Jalle,3,3,3,3,1,3,17
+,Mérignac,8,9,8,8,8,9,52
+,Pessac,7,9,8,8,8,8,49
+,Saint-Médard-en-Jalles,8,11,9,8,7,6,48
+,Talence,12,11,11,12,10,10,65
+,Villenave-d'Ornon,6,8,7,6,7,7,41
+Vols violents sans arme,Ambarès-et-Lagrave,0,0,0,0,0,0,2
+,Ambès,0,,,,,,0
+,Bègles,1,1,1,1,1,2,6
+,Blanquefort,,1,0,0,1,1,2
+,Bordeaux,5,4,4,3,4,4,23
+,Bruges,1,1,1,1,1,1,5
+,Cenon,2,1,1,1,1,1,7
+,Floirac,0,1,1,1,1,1,5
+,Gradignan,0,0,,,,0,1
+,Le Bouscat,1,1,1,1,1,1,5
+,le Taillan-Médoc/Eysines,1,1,0,0,0,0,3
+,Lormont,3,1,1,1,1,2,8
+,Martignas-sur-Jalle,,,0,,,,0
+,Mérignac,0,0,1,0,0,1,3
+,Pessac,1,1,0,1,0,1,4
+,Saint-Médard-en-Jalles,,,,0,0,0,1
+,Talence,2,1,1,1,1,1,7
+,Villenave-d'Ornon,0,0,1,0,0,1,3
+Total général,,1176,1205,1118,1115,1178,1156,6 949
