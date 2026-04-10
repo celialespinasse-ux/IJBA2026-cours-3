@@ -43,6 +43,36 @@
         body.hide-legend .legend { display: none; }
         body.hide-zoom .leaflet-control-zoom { display: none; }
 
+        /* Compass rose */
+        .compass {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: rgba(255,255,255,0.9);
+            border: 2px solid rgba(0,0,0,0.2);
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-family: monospace;
+            font-size: 9px;
+            line-height: 1;
+            color: #7f8c8d;
+            user-select: none;
+            gap: 1px;
+        }
+        .compass__n { font-weight: 700; color: #e74c3c; font-size: 11px; }
+        .compass__cross { font-size: 12px; color: #bdc3c7; line-height: 1; }
+        .compass__labels { display: flex; gap: 12px; font-size: 8px; }
+        .compass__s { font-size: 8px; color: #7f8c8d; }
+
+        /* Scale bar */
+        .leaflet-control-scale-line {
+            background: rgba(255,255,255,0.9) !important;
+            border-color: #7f8c8d !important;
+            font-family: monospace !important;
+            font-size: 10px !important;
+            color: #7f8c8d !important;
+        }
+
         /* Embed button */
         .embed-btn {
             position: absolute;
@@ -304,6 +334,30 @@
             return div;
         };
         legend.addTo(map);
+
+        // ---------- scale bar + compass rose ----------
+        L.control.scale({ metric: true, imperial: false, position: 'bottomleft' }).addTo(map);
+
+        const compassControl = (function () {
+            const Compass = L.Control.extend({
+                options: { position: 'bottomright' },
+                onAdd: function () {
+                    const div = L.DomUtil.create('div', 'compass leaflet-control');
+                    div.setAttribute('aria-hidden', 'true');
+                    div.title = 'Nord en haut';
+                    div.innerHTML = '<span class="compass__n">N</span>' +
+                        '<span class="compass__cross">+</span>' +
+                        '<span class="compass__labels">' +
+                            '<span class="compass__w">O</span>' +
+                            '<span class="compass__e">E</span>' +
+                        '</span>' +
+                        '<span class="compass__s">S</span>';
+                    return div;
+                },
+            });
+            return new Compass();
+        })();
+        compassControl.addTo(map);
 
         // ---------- embed mode ----------
         function isEmbedMode() {
