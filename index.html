@@ -41,6 +41,7 @@
         /* Embed mode */
         body.is-embed .info-panel { display: none; }
         body.hide-legend .legend { display: none; }
+        body.hide-zoom .leaflet-control-zoom { display: none; }
 
         /* Embed button */
         .embed-btn {
@@ -152,6 +153,7 @@
           <div class="embed-dialog__opts">
             <label><input type="checkbox" id="embed-compact" checked> Mode embed (masquer l'en-tête)</label>
             <label><input type="checkbox" id="embed-hide-legend"> Masquer la légende</label>
+            <label><input type="checkbox" id="embed-hide-zoom"> Désactiver le zoom</label>
             <label><input type="checkbox" id="embed-lock-bounds"> Verrouiller la vue actuelle</label>
             <label class="embed-height">
               Hauteur de l'iframe&nbsp;:
@@ -311,7 +313,7 @@
         function parseHiddenFeatures() {
             const raw = new URLSearchParams(window.location.search).get('hide');
             if (!raw) return new Set();
-            return new Set(raw.split(',').map(s => s.trim()).filter(s => ['legend'].includes(s)));
+            return new Set(raw.split(',').map(s => s.trim()).filter(s => ['legend', 'zoom'].includes(s)));
         }
 
         function parseBounds() {
@@ -330,16 +332,22 @@
         for (const feat of hidden) {
             document.body.classList.add('hide-' + feat);
         }
+        if (hidden.has('zoom')) {
+            map.scrollWheelZoom.disable();
+            map.doubleClickZoom.disable();
+            map.touchZoom.disable();
+            map.boxZoom.disable();
+        }
         const urlBounds = parseBounds();
         if (urlBounds) {
             map.setMaxBounds(urlBounds);
             map.fitBounds(urlBounds);
         }
 
-        function buildShareableUrl({ embed = false, hideLegend = false, lockBounds = false } = {}) {
+        function buildShareableUrl({ embed = false, hide = new Set(), lockBounds = false } = {}) {
             const params = new URLSearchParams();
             if (embed) params.set('embed', '1');
-            if (hideLegend) params.set('hide', 'legend');
+            if (hide.size > 0) params.set('hide', [...hide].sort().join(','));
             if (lockBounds) {
                 const b = map.getBounds();
                 params.set('bounds', [
@@ -375,6 +383,7 @@
             const closeBtn = document.getElementById('embed-close');
             const compactCb = document.getElementById('embed-compact');
             const hideLegendCb = document.getElementById('embed-hide-legend');
+            const hideZoomCb = document.getElementById('embed-hide-zoom');
             const lockBoundsCb = document.getElementById('embed-lock-bounds');
             const urlInput = document.getElementById('embed-url');
             const iframeOut = document.getElementById('embed-iframe-code');
@@ -393,9 +402,11 @@
 
             const refresh = () => {
                 const compact = compactCb.checked;
-                const hideLegend = hideLegendCb.checked;
+                const hide = new Set();
+                if (hideLegendCb.checked) hide.add('legend');
+                if (hideZoomCb.checked) hide.add('zoom');
                 const lockBounds = lockBoundsCb.checked;
-                const url = buildShareableUrl({ embed: compact, hideLegend, lockBounds });
+                const url = buildShareableUrl({ embed: compact, hide, lockBounds });
                 urlInput.value = url;
                 const height = Math.max(400, parseInt(heightInput.value, 10) || 600);
                 iframeOut.value =
@@ -428,6 +439,7 @@
             closeBtn.addEventListener('click', close);
             compactCb.addEventListener('change', refresh);
             hideLegendCb.addEventListener('change', refresh);
+            hideZoomCb.addEventListener('change', refresh);
             lockBoundsCb.addEventListener('change', refresh);
             heightInput.addEventListener('input', refresh);
             copyUrlBtn.addEventListener('click', () => copy(urlInput.value, copyUrlBtn));
