@@ -37,6 +37,96 @@
         .popup-table th, .popup-table td { padding: 4px; border: 1px solid #eee; text-align: center; font-size: 11px; }
         .popup-table th { background: #f8f9fa; }
         .ratio-box { background: #f1f2f6; padding: 8px; border-radius: 4px; font-size: 12px; margin-top: 5px; }
+
+        /* Embed mode */
+        body.is-embed .info-panel { display: none; }
+        body.hide-legend .legend { display: none; }
+
+        /* Embed button */
+        .embed-btn {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            z-index: 1000;
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #2c3e50;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .embed-btn:hover { background: #2c3e50; color: #fff; }
+
+        /* Embed dialog */
+        .embed-dialog {
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0;
+            background: #fff;
+            color: #333;
+            max-width: 560px;
+            width: calc(100vw - 32px);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            box-shadow: 0 12px 48px -12px rgba(0,0,0,0.4);
+        }
+        .embed-dialog::backdrop { background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); }
+        .embed-dialog__head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px 12px 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .embed-dialog__head h2 { margin: 0; font-size: 18px; color: #2c3e50; }
+        .embed-dialog__close {
+            background: none; border: none; font-size: 24px; cursor: pointer;
+            color: #999; padding: 0 6px;
+        }
+        .embed-dialog__close:hover { color: #e74c3c; }
+        .embed-dialog__body { padding: 16px 20px 20px 20px; }
+        .embed-dialog__intro { margin: 0 0 14px 0; font-size: 13px; color: #666; line-height: 1.5; }
+        .embed-dialog__intro code { font-size: 11px; background: #f5f5f5; padding: 1px 4px; border: 1px solid #ddd; }
+        .embed-dialog__opts {
+            display: flex; flex-wrap: wrap; gap: 12px 20px;
+            padding-bottom: 14px; margin-bottom: 14px;
+            border-bottom: 1px solid #eee; font-size: 13px;
+        }
+        .embed-dialog__opts label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .embed-height {
+            display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #333;
+        }
+        .embed-height input[type="number"] {
+            width: 72px; padding: 4px 6px; border: 1px solid #ccc;
+            font-family: monospace; font-size: 12px;
+        }
+        .embed-dialog__field { margin-bottom: 14px; }
+        .embed-dialog__field > label {
+            display: block; font-size: 11px; letter-spacing: 0.1em;
+            text-transform: uppercase; color: #999; margin-bottom: 6px;
+        }
+        .embed-dialog__row { display: flex; gap: 8px; align-items: stretch; }
+        .embed-dialog__row input[type="text"],
+        .embed-dialog__row textarea {
+            flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ccc;
+            background: #fafafa; font-family: monospace; font-size: 11.5px;
+            color: #333; resize: vertical; line-height: 1.5;
+        }
+        .embed-copy {
+            padding: 8px 14px; background: #2c3e50; color: #fff;
+            border: 1px solid #2c3e50; cursor: pointer; font-size: 12px;
+            white-space: nowrap;
+        }
+        .embed-copy:hover { background: #e67e22; border-color: #e67e22; }
+        .embed-dialog__hint { margin: 8px 0 0 0; font-size: 11px; color: #999; line-height: 1.4; }
+        .embed-dialog__advanced > summary {
+            cursor: pointer; list-style: none; padding: 6px 0;
+            font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #999;
+        }
+        .embed-dialog__advanced > summary::-webkit-details-marker { display: none; }
+        .embed-dialog__advanced > summary::before { content: '+ '; display: inline-block; width: 14px; }
+        .embed-dialog__advanced[open] > summary::before { content: '− '; }
     </style>
 </head>
 <body>
@@ -45,6 +135,62 @@
         <div style="font-size: 12px; color: #7f8c8d;">Bordeaux Métropole • Évolution et Ratios (2020-2024)</div>
     </div>
     <div id="map"></div>
+
+    <button type="button" id="embed-open" class="embed-btn" aria-haspopup="dialog">⌘ Partager / Intégrer</button>
+
+    <dialog id="embed-dialog" class="embed-dialog" aria-label="Intégrer la carte">
+      <form method="dialog" class="embed-dialog__form">
+        <header class="embed-dialog__head">
+          <h2>Partager / Intégrer la carte</h2>
+          <button type="button" id="embed-close" class="embed-dialog__close" aria-label="Fermer">×</button>
+        </header>
+        <div class="embed-dialog__body">
+          <p class="embed-dialog__intro">
+            Copiez le lien direct pour partager la vue actuelle, ou le code
+            <code>&lt;iframe&gt;</code> pour intégrer la carte dans un article.
+          </p>
+          <div class="embed-dialog__opts">
+            <label><input type="checkbox" id="embed-compact" checked> Mode embed (masquer l'en-tête)</label>
+            <label><input type="checkbox" id="embed-hide-legend"> Masquer la légende</label>
+            <label><input type="checkbox" id="embed-lock-bounds"> Verrouiller la vue actuelle</label>
+            <label class="embed-height">
+              Hauteur de l'iframe&nbsp;:
+              <input type="number" id="embed-height" min="400" max="2000" step="20" value="600">
+              <span>px</span>
+            </label>
+          </div>
+          <div class="embed-dialog__field">
+            <label for="embed-url">Lien direct</label>
+            <div class="embed-dialog__row">
+              <input id="embed-url" type="text" readonly>
+              <button type="button" id="embed-copy-url" class="embed-copy">Copier</button>
+            </div>
+          </div>
+          <div class="embed-dialog__field">
+            <label for="embed-iframe-code">Code d'intégration (<code>&lt;iframe&gt;</code>)</label>
+            <div class="embed-dialog__row">
+              <textarea id="embed-iframe-code" rows="6" readonly></textarea>
+              <button type="button" id="embed-copy-iframe" class="embed-copy">Copier</button>
+            </div>
+            <p class="embed-dialog__hint">
+              Collez ce bloc dans un « HTML personnalisé » WordPress.
+              Fonctionne dans tout thème qui accepte les iframes.
+            </p>
+          </div>
+          <details class="embed-dialog__advanced">
+            <summary>Redimensionnement automatique (optionnel)</summary>
+            <p class="embed-dialog__hint">
+              Ajoutez ce script une fois sur la page WordPress pour que l'iframe
+              s'adapte automatiquement à son contenu.
+            </p>
+            <div class="embed-dialog__row">
+              <textarea id="embed-script-code" rows="5" readonly></textarea>
+              <button type="button" id="embed-copy-script" class="embed-copy">Copier</button>
+            </div>
+          </details>
+        </div>
+      </form>
+    </dialog>
 
     <script>
         const map = L.map('map').setView([44.86, -0.58], 11);
@@ -156,6 +302,139 @@
             return div;
         };
         legend.addTo(map);
+
+        // ---------- embed mode ----------
+        function isEmbedMode() {
+            return new URLSearchParams(window.location.search).get('embed') === '1';
+        }
+
+        function parseHiddenFeatures() {
+            const raw = new URLSearchParams(window.location.search).get('hide');
+            if (!raw) return new Set();
+            return new Set(raw.split(',').map(s => s.trim()).filter(s => ['legend'].includes(s)));
+        }
+
+        function parseBounds() {
+            const raw = new URLSearchParams(window.location.search).get('bounds');
+            if (!raw) return null;
+            const parts = raw.split(',').map(Number);
+            if (parts.length !== 4 || parts.some(isNaN)) return null;
+            return L.latLngBounds([parts[0], parts[1]], [parts[2], parts[3]]);
+        }
+
+        // Apply embed mode on load
+        if (isEmbedMode()) {
+            document.body.classList.add('is-embed');
+        }
+        const hidden = parseHiddenFeatures();
+        for (const feat of hidden) {
+            document.body.classList.add('hide-' + feat);
+        }
+        const urlBounds = parseBounds();
+        if (urlBounds) {
+            map.setMaxBounds(urlBounds);
+            map.fitBounds(urlBounds);
+        }
+
+        function buildShareableUrl({ embed = false, hideLegend = false, lockBounds = false } = {}) {
+            const params = new URLSearchParams();
+            if (embed) params.set('embed', '1');
+            if (hideLegend) params.set('hide', 'legend');
+            if (lockBounds) {
+                const b = map.getBounds();
+                params.set('bounds', [
+                    b.getSouth().toFixed(5), b.getWest().toFixed(5),
+                    b.getNorth().toFixed(5), b.getEast().toFixed(5)
+                ].join(','));
+            }
+            const qs = params.toString();
+            const origin = window.location.origin + window.location.pathname;
+            return qs ? origin + '?' + qs : origin;
+        }
+
+        // postMessage bridge for parent-page auto-resize when embedded
+        (function installEmbedResizeBridge() {
+            if (!isEmbedMode() || window.parent === window) return;
+            let rafPending = false;
+            const report = () => {
+                rafPending = false;
+                try {
+                    window.parent.postMessage({ type: 'police-map-height', height: document.documentElement.scrollHeight }, '*');
+                } catch (_) {}
+            };
+            const queue = () => { if (!rafPending) { rafPending = true; requestAnimationFrame(report); } };
+            window.addEventListener('resize', queue);
+            new MutationObserver(queue).observe(document.body, { childList: true, subtree: true });
+            queue();
+        })();
+
+        // ---------- embed dialog ----------
+        (function wireEmbedDialog() {
+            const openBtn = document.getElementById('embed-open');
+            const dialog = document.getElementById('embed-dialog');
+            const closeBtn = document.getElementById('embed-close');
+            const compactCb = document.getElementById('embed-compact');
+            const hideLegendCb = document.getElementById('embed-hide-legend');
+            const lockBoundsCb = document.getElementById('embed-lock-bounds');
+            const urlInput = document.getElementById('embed-url');
+            const iframeOut = document.getElementById('embed-iframe-code');
+            const heightInput = document.getElementById('embed-height');
+            const copyUrlBtn = document.getElementById('embed-copy-url');
+            const copyIframeBtn = document.getElementById('embed-copy-iframe');
+            const copyScriptBtn = document.getElementById('embed-copy-script');
+            const scriptOut = document.getElementById('embed-script-code');
+            if (!openBtn || !dialog) return;
+
+            // Hide the embed button itself when in embed mode
+            if (isEmbedMode()) openBtn.style.display = 'none';
+
+            const pageSlug = window.location.pathname.split('/').filter(Boolean).pop() || '/';
+            const safeSelector = pageSlug.replace(/"/g, '\\"');
+
+            const refresh = () => {
+                const compact = compactCb.checked;
+                const hideLegend = hideLegendCb.checked;
+                const lockBounds = lockBoundsCb.checked;
+                const url = buildShareableUrl({ embed: compact, hideLegend, lockBounds });
+                urlInput.value = url;
+                const height = Math.max(400, parseInt(heightInput.value, 10) || 600);
+                iframeOut.value =
+                    '<iframe\n  src="' + url + '"\n  width="100%"\n  height="' + height +
+                    '"\n  style="border: 1px solid #ccc; max-width: 100%;"\n  title="Police Municipale — Bordeaux Métropole"' +
+                    '\n  loading="lazy"\n  allowfullscreen\n></iframe>';
+                scriptOut.value =
+                    '<script>\nwindow.addEventListener("message", function (e) {\n  if (!e.data || e.data.type !== "police-map-height") return;\n  var f = document.querySelector(\'iframe[src*="' + safeSelector + '"]\');\n  if (!f) return;\n  var h = Math.max(400, Math.min(5000, Number(e.data.height) || 0));\n  if (h) f.style.height = h + "px";\n});\n<\/script>';
+            };
+            const open = () => {
+                refresh();
+                if (typeof dialog.showModal === 'function') dialog.showModal();
+                else dialog.setAttribute('open', '');
+            };
+            const close = () => {
+                if (typeof dialog.close === 'function') dialog.close();
+                else dialog.removeAttribute('open');
+                openBtn.focus();
+            };
+            const copy = async (text, btn) => {
+                try {
+                    await navigator.clipboard.writeText(text);
+                    const prev = btn.textContent;
+                    btn.textContent = 'Copié ✓';
+                    setTimeout(() => { btn.textContent = prev; }, 1500);
+                } catch (_) { btn.textContent = 'Échec'; }
+            };
+
+            openBtn.addEventListener('click', open);
+            closeBtn.addEventListener('click', close);
+            compactCb.addEventListener('change', refresh);
+            hideLegendCb.addEventListener('change', refresh);
+            lockBoundsCb.addEventListener('change', refresh);
+            heightInput.addEventListener('input', refresh);
+            copyUrlBtn.addEventListener('click', () => copy(urlInput.value, copyUrlBtn));
+            copyIframeBtn.addEventListener('click', () => copy(iframeOut.value, copyIframeBtn));
+            copyScriptBtn.addEventListener('click', () => copy(scriptOut.value, copyScriptBtn));
+            dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+        })();
     </script>
 </body>
 </html>
