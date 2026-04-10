@@ -38,6 +38,85 @@
             margin-top: 15px;
             line-height: 1.5;
         }
+
+        /* Embed mode */
+        body.is-embed .chart-container h2 { display: none; }
+        body.is-embed .chart-container { margin-top: 0; padding-top: 10px; box-shadow: none; }
+
+        /* Embed button */
+        .embed-btn {
+            display: block;
+            margin: 10px auto 0;
+            padding: 8px 14px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            color: #2c3e50;
+        }
+        .embed-btn:hover { background: #2c3e50; color: #fff; }
+
+        /* Embed dialog */
+        .embed-dialog {
+            border: 1px solid #ccc; border-radius: 4px; padding: 0;
+            background: #fff; color: #333; max-width: 560px;
+            width: calc(100vw - 32px); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 12px 48px -12px rgba(0,0,0,0.4);
+        }
+        .embed-dialog::backdrop { background: rgba(0,0,0,0.45); backdrop-filter: blur(2px); }
+        .embed-dialog__head {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 20px 12px 20px; border-bottom: 1px solid #ddd;
+        }
+        .embed-dialog__head h2 { margin: 0; font-size: 18px; color: #2c3e50; }
+        .embed-dialog__close {
+            background: none; border: none; font-size: 24px; cursor: pointer;
+            color: #999; padding: 0 6px;
+        }
+        .embed-dialog__close:hover { color: #e74c3c; }
+        .embed-dialog__body { padding: 16px 20px 20px 20px; }
+        .embed-dialog__intro { margin: 0 0 14px 0; font-size: 13px; color: #666; line-height: 1.5; }
+        .embed-dialog__intro code { font-size: 11px; background: #f5f5f5; padding: 1px 4px; border: 1px solid #ddd; }
+        .embed-dialog__opts {
+            display: flex; flex-wrap: wrap; gap: 12px 20px;
+            padding-bottom: 14px; margin-bottom: 14px;
+            border-bottom: 1px solid #eee; font-size: 13px;
+        }
+        .embed-dialog__opts label { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+        .embed-height {
+            display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: #333;
+        }
+        .embed-height input[type="number"] {
+            width: 72px; padding: 4px 6px; border: 1px solid #ccc;
+            font-family: monospace; font-size: 12px;
+        }
+        .embed-dialog__field { margin-bottom: 14px; }
+        .embed-dialog__field > label {
+            display: block; font-size: 11px; letter-spacing: 0.1em;
+            text-transform: uppercase; color: #999; margin-bottom: 6px;
+        }
+        .embed-dialog__row { display: flex; gap: 8px; align-items: stretch; }
+        .embed-dialog__row input[type="text"],
+        .embed-dialog__row textarea {
+            flex: 1; min-width: 0; padding: 8px 10px; border: 1px solid #ccc;
+            background: #fafafa; font-family: monospace; font-size: 11.5px;
+            color: #333; resize: vertical; line-height: 1.5;
+        }
+        .embed-copy {
+            padding: 8px 14px; background: #2c3e50; color: #fff;
+            border: 1px solid #2c3e50; cursor: pointer; font-size: 12px;
+            white-space: nowrap;
+        }
+        .embed-copy:hover { background: #e67e22; border-color: #e67e22; }
+        .embed-dialog__hint { margin: 8px 0 0 0; font-size: 11px; color: #999; line-height: 1.4; }
+        .embed-dialog__advanced > summary {
+            cursor: pointer; list-style: none; padding: 6px 0;
+            font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: #999;
+        }
+        .embed-dialog__advanced > summary::-webkit-details-marker { display: none; }
+        .embed-dialog__advanced > summary::before { content: '+ '; display: inline-block; width: 14px; }
+        .embed-dialog__advanced[open] > summary::before { content: '− '; }
     </style>
 </head>
 <body>
@@ -55,7 +134,62 @@
     <div class="description">
         <p><strong>Note :</strong> Les données correspondent au taux pour mille habitants. "Vols (total)" regroupe les vols d'accessoires, les vols dans les véhicules, les vols de véhicules, les vols sans violence et les vols violents sans arme.</p>
     </div>
+
+    <button type="button" id="embed-open" class="embed-btn" aria-haspopup="dialog">⌘ Partager / Intégrer</button>
 </div>
+
+<dialog id="embed-dialog" class="embed-dialog" aria-label="Intégrer le graphique">
+  <form method="dialog" class="embed-dialog__form">
+    <header class="embed-dialog__head">
+      <h2>Partager / Intégrer le graphique</h2>
+      <button type="button" id="embed-close" class="embed-dialog__close" aria-label="Fermer">×</button>
+    </header>
+    <div class="embed-dialog__body">
+      <p class="embed-dialog__intro">
+        Copiez le lien direct pour partager la vue actuelle, ou le code
+        <code>&lt;iframe&gt;</code> pour intégrer le graphique dans un article.
+      </p>
+      <div class="embed-dialog__opts">
+        <label><input type="checkbox" id="embed-compact" checked> Mode embed (masquer le titre)</label>
+        <label><input type="checkbox" id="embed-include-city" checked> Conserver la ville sélectionnée</label>
+        <label class="embed-height">
+          Hauteur de l'iframe&nbsp;:
+          <input type="number" id="embed-height" min="300" max="2000" step="20" value="520">
+          <span>px</span>
+        </label>
+      </div>
+      <div class="embed-dialog__field">
+        <label for="embed-url">Lien direct</label>
+        <div class="embed-dialog__row">
+          <input id="embed-url" type="text" readonly>
+          <button type="button" id="embed-copy-url" class="embed-copy">Copier</button>
+        </div>
+      </div>
+      <div class="embed-dialog__field">
+        <label for="embed-iframe-code">Code d'intégration (<code>&lt;iframe&gt;</code>)</label>
+        <div class="embed-dialog__row">
+          <textarea id="embed-iframe-code" rows="6" readonly></textarea>
+          <button type="button" id="embed-copy-iframe" class="embed-copy">Copier</button>
+        </div>
+        <p class="embed-dialog__hint">
+          Collez ce bloc dans un « HTML personnalisé » WordPress.
+          Fonctionne dans tout thème qui accepte les iframes.
+        </p>
+      </div>
+      <details class="embed-dialog__advanced">
+        <summary>Redimensionnement automatique (optionnel)</summary>
+        <p class="embed-dialog__hint">
+          Ajoutez ce script une fois sur la page WordPress pour que l'iframe
+          s'adapte automatiquement à son contenu.
+        </p>
+        <div class="embed-dialog__row">
+          <textarea id="embed-script-code" rows="5" readonly></textarea>
+          <button type="button" id="embed-copy-script" class="embed-copy">Copier</button>
+        </div>
+      </details>
+    </div>
+  </form>
+</dialog>
 
 <script>
 const rawData = {
@@ -259,6 +393,105 @@ updateChart(cities[0]);
 select.addEventListener('change', (e) => {
     updateChart(e.target.value);
 });
+
+// ---------- embed mode ----------
+(function() {
+    const params = new URLSearchParams(window.location.search);
+
+    // Apply embed mode on load
+    if (params.get('embed') === '1') {
+        document.body.classList.add('is-embed');
+    }
+
+    // Pre-select city from URL
+    const urlCity = params.get('city');
+    if (urlCity && rawData.data[urlCity]) {
+        select.value = urlCity;
+        updateChart(urlCity);
+    }
+
+    // postMessage bridge for auto-resize
+    if (params.get('embed') === '1' && window.parent !== window) {
+        let rafPending = false;
+        const report = () => {
+            rafPending = false;
+            try {
+                window.parent.postMessage({ type: 'delinquance-chart-height', height: document.documentElement.scrollHeight }, '*');
+            } catch (_) {}
+        };
+        const queue = () => { if (!rafPending) { rafPending = true; requestAnimationFrame(report); } };
+        window.addEventListener('resize', queue);
+        new MutationObserver(queue).observe(document.body, { childList: true, subtree: true });
+        queue();
+    }
+
+    // Hide embed button in embed mode
+    const openBtn = document.getElementById('embed-open');
+    if (params.get('embed') === '1' && openBtn) openBtn.style.display = 'none';
+
+    // ---------- embed dialog ----------
+    const dialog = document.getElementById('embed-dialog');
+    const closeBtn = document.getElementById('embed-close');
+    const compactCb = document.getElementById('embed-compact');
+    const includeCityCb = document.getElementById('embed-include-city');
+    const urlInput = document.getElementById('embed-url');
+    const iframeOut = document.getElementById('embed-iframe-code');
+    const heightInput = document.getElementById('embed-height');
+    const copyUrlBtn = document.getElementById('embed-copy-url');
+    const copyIframeBtn = document.getElementById('embed-copy-iframe');
+    const copyScriptBtn = document.getElementById('embed-copy-script');
+    const scriptOut = document.getElementById('embed-script-code');
+    if (!openBtn || !dialog) return;
+
+    const pageSlug = window.location.pathname.split('/').filter(Boolean).pop() || '/';
+    const safeSelector = pageSlug.replace(/"/g, '\\"');
+
+    const refresh = () => {
+        const p = new URLSearchParams();
+        if (compactCb.checked) p.set('embed', '1');
+        if (includeCityCb.checked && select.value) p.set('city', select.value);
+        const qs = p.toString();
+        const origin = window.location.origin + window.location.pathname;
+        const url = qs ? origin + '?' + qs : origin;
+        urlInput.value = url;
+        const height = Math.max(300, parseInt(heightInput.value, 10) || 520);
+        iframeOut.value =
+            '<iframe\n  src="' + url + '"\n  width="100%"\n  height="' + height +
+            '"\n  style="border: 1px solid #ccc; max-width: 100%;"\n  title="Délinquance — Bordeaux Métropole"' +
+            '\n  loading="lazy"\n  allowfullscreen\n></iframe>';
+        scriptOut.value =
+            '<script>\nwindow.addEventListener("message", function (e) {\n  if (!e.data || e.data.type !== "delinquance-chart-height") return;\n  var f = document.querySelector(\'iframe[src*="' + safeSelector + '"]\');\n  if (!f) return;\n  var h = Math.max(300, Math.min(5000, Number(e.data.height) || 0));\n  if (h) f.style.height = h + "px";\n});\n<\/script>';
+    };
+    const open = () => {
+        refresh();
+        if (typeof dialog.showModal === 'function') dialog.showModal();
+        else dialog.setAttribute('open', '');
+    };
+    const close = () => {
+        if (typeof dialog.close === 'function') dialog.close();
+        else dialog.removeAttribute('open');
+        openBtn.focus();
+    };
+    const copy = async (text, btn) => {
+        try {
+            await navigator.clipboard.writeText(text);
+            const prev = btn.textContent;
+            btn.textContent = 'Copié ✓';
+            setTimeout(() => { btn.textContent = prev; }, 1500);
+        } catch (_) { btn.textContent = 'Échec'; }
+    };
+
+    openBtn.addEventListener('click', open);
+    closeBtn.addEventListener('click', close);
+    compactCb.addEventListener('change', refresh);
+    includeCityCb.addEventListener('change', refresh);
+    heightInput.addEventListener('input', refresh);
+    select.addEventListener('change', () => { if (dialog.open) refresh(); });
+    copyUrlBtn.addEventListener('click', () => copy(urlInput.value, copyUrlBtn));
+    copyIframeBtn.addEventListener('click', () => copy(iframeOut.value, copyIframeBtn));
+    copyScriptBtn.addEventListener('click', () => copy(scriptOut.value, copyScriptBtn));
+    dialog.addEventListener('click', (e) => { if (e.target === dialog) close(); });
+})();
 </script>
 
 </body>
